@@ -1,50 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Цветные фигуры</title>
-    <style>
-        .container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            margin: 50px auto;
-            border: 1px solid black;
-        }
-        .square {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border: 1px solid black;
-        }
-        .red { background-color: red; top: 50px; left: 50px; }
-        .yellow { background-color: yellow; top: 150px; left: 250px; }
-        .blue { background-color: blue; bottom: 50px; left: 100px; }
-        .pink { background-color: pink; bottom: 50px; right: 100px; width: 120px; height: 60px; }
-        .nested {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background-color: yellow;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="square red"></div>
-        <div class="square yellow"></div>
-        <div class="square blue">
-            <div class="nested"></div>
-        </div>
-        <div class="square pink"></div>
-    </div>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -52,6 +5,7 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -69,6 +23,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
         }
         h1, h2 {
             color: #333;
@@ -141,6 +96,45 @@
             font-weight: bold;
             font-size: 14px;
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            border-left: 3px solid #007BFF;
+        }
+        .timeline-item {
+            margin-bottom: 20px;
+            padding-left: 10px;
+        }
+        .timeline-item h3 {
+            color: #007BFF;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5a6268;
+        }
+        body.dark-theme {
+            background: #1e1e1e;
+            color: #fff;
+        }
+        .container.dark-theme {
+            background: #2e2e2e;
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -163,17 +157,51 @@
             <li><b>Кибербезопасность:</b> Пентестинг, работа с Kali Linux</li>
             <li><b>Базы данных:</b> Sqlite</li>
         </ul>
+        <canvas id="skillsChart" width="400" height="200"></canvas>
         
         <h2><i class="fas fa-briefcase"></i> Опыт работы</h2>
-        <p><b>Разработчик Telegram-ботов</b><br>
-        Разработка и поддержка ботов, интеграция платежных систем</p>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>2021-2023</h3>
+                <p><b>Разработчик Telegram-ботов</b> — Разработка и поддержка ботов</p>
+            </div>
+            <div class="timeline-item">
+                <h3>2020-2021</h3>
+                <p><b>Участник CTF</b> — Решение задач по кибербезопасности</p>
+            </div>
+        </div>
         
         <h2><i class="fas fa-star"></i> Дополнительно</h2>
         <p>Участие в CTF-соревнованиях, изучение кибербезопасности, создание проектов в Android Studio</p>
         
         <a href="resume.pdf" class="cta-button" download>Скачать резюме</a>
-        
-
+        <button onclick="toggleTheme()">Сменить тему</button>
     </div>
+    <script>
+        // Dark theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            document.querySelector('.container').classList.toggle('dark-theme');
+        }
+
+        // Skills Chart
+        const ctx = document.getElementById('skillsChart').getContext('2d');
+        const skillsChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Python', 'HTML', 'Kotlin', 'React', 'Kali Linux'],
+                datasets: [{
+                    label: 'Навыки',
+                    data: [9, 8, 7, 8, 6],
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
 </body>
 </html>
