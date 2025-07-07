@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title">Марат Бекович</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍💻</text></svg>">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="logo">
+                    <h1 data-i18n="name">Марат Бекович</h1>
+                </div>
+                <div class="language-switcher">
+                    <button id="lang-ru" class="lang-btn active" onclick="changeLanguage('ru')">RU</button>
+                    <button id="lang-en" class="lang-btn" onclick="changeLanguage('en')">EN</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1 data-i18n="hero.title">Добро пожаловать!</h1>
+                <p data-i18n="hero.subtitle">Веб-разработчик и программист</p>
+                <p data-i18n="hero.description">Создаю современные веб-приложения и решения для бизнеса</p>
+            </div>
+        </section>
+
+        <section class="about">
+            <div class="container">
+                <h2 data-i18n="about.title">О себе</h2>
+                <p data-i18n="about.description">Я веб-разработчик с опытом создания современных веб-приложений. Специализируюсь на фронтенд и бэкенд разработке.</p>
+            </div>
+        </section>
+
+        <section class="skills">
+            <div class="container">
+                <h2 data-i18n="skills.title">Навыки</h2>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <h3>Frontend</h3>
+                        <p>HTML, CSS, JavaScript, React, Vue</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Backend</h3>
+                        <p>Node.js, Python, PHP</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3 data-i18n="skills.databases">Базы данных</h3>
+                        <p>MySQL, PostgreSQL, MongoDB</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact">
+            <div class="container">
+                <h2 data-i18n="contact.title">Контакты</h2>
+                <p data-i18n="contact.description">Свяжитесь со мной для обсуждения проектов</p>
+                <div class="contact-info">
+                    <p data-i18n="contact.email">Email: maratbekov@pc.edu.kg</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p data-i18n="footer.text">&copy; 2024 Марат Бекович. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
