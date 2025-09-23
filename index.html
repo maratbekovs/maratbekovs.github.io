@@ -1,913 +1,490 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="scroll-smooth">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC IUK</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Figtree:wght@700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="iuk.png">
+    <title>Интерактивное руководство по установке Arch Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Calm Harmony (Warm Neutrals) -->
+    <!-- Application Structure Plan: A single-page, vertical layout with a sticky sidebar for navigation. This structure is chosen because the source material is a linear, step-by-step process. The sidebar allows for quick review of previous steps, while distinct cards for each step break down the complex process into manageable chunks. Interactions like copy-to-clipboard and a visual partition diagram are added to improve usability and reduce user error. -->
+    <!-- Visualization & Content Choices: Report Info: Disk Partitioning -> Goal: Organize/Inform -> Viz/Presentation: Interactive HTML/CSS diagram -> Interaction: Highlighting sections on scroll/click -> Justification: Simplifies the most abstract and error-prone step of the installation, making it easier to visualize the outcome. Report Info: Terminal Commands -> Goal: Inform -> Presentation: Styled <pre><code> blocks -> Interaction: Copy-to-clipboard button -> Justification: Prevents typos and speeds up the process for the user. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        :root {
-            --primary-red: #c1272d;
-            --primary-dark: #9e1c21;
-            --secondary: #e74c3c;
-            --accent: #ff6b6b;
-            --accent-hover: #ff5252;
-            --background-light: #fafafa;
-            --surface-white: #ffffff;
-            --border-color: #eeeeee;
-            --text-primary: #333333;
-            --text-secondary: #555555;
-            --text-on-primary: #ffffff;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        @keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; height: 100%; }
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--background-light);
-            color: var(--text-primary);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            animation: fadeIn 0.8s ease-in;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .code-block {
             position: relative;
-            overflow-x: hidden;
-            font-size: 14px;
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
         }
-        
-        /* Background Elements */
-        .bg-element {
-            position: fixed;
-            border-radius: 50%;
-            z-index: -1;
-            opacity: 0.08;
-            filter: blur(40px);
-            pointer-events: none;
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
         }
-        .bg-element-1 { width: 300px; height: 300px; background: var(--accent); top: 15%; left: 5%; animation: float 18s ease-in-out infinite; }
-        .bg-element-2 { width: 250px; height: 250px; background: var(--primary-dark); bottom: 20%; right: 10%; animation: float 20s ease-in-out infinite reverse; }
-        .bg-element-3 { width: 200px; height: 200px; background: var(--primary-red); top: 65%; left: 8%; animation: float 15s ease-in-out infinite; }
-        .bg-element-4 { width: 280px; height: 280px; background: var(--accent); top: 12%; right: 7%; animation: float 22s ease-in-out infinite reverse; }
-
-        /* Header */
-        .main-header { background-color: var(--surface-white); position: sticky; top: 0; z-index: 1000; transition: var(--transition); box-shadow: var(--shadow); padding: 0; }
-                .header-top {
-                    background: var(--primary-red);
-                    color: var(--text-on-primary);
-                    padding: 6px 0;
-                    font-size: 12px;
-                }
-
-                .header-top-content {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    max-width: 1280px;
-                    margin: 0 auto;
-                    padding: 0 12px;
-                    flex-wrap: nowrap; /* запрет переносов */
-                }
-
-                .contact-info {
-                    display: flex;
-                    gap: 12px;
-                    flex-wrap: nowrap;
-                    font-size: 12px;
-                }
-
-                .social-links {
-                    display: flex;
-                    gap: 10px;
-                }
-
-                .social-links a {
-                    color: var(--text-on-primary);
-                    font-size: 14px;
-                    transition: var(--transition);
-                }
-
-                .social-links a:hover { transform: translateY(-3px); }
-        .header-main { display: flex; justify-content: space-between; align-items: center; max-width: 1280px; margin: 0 auto; padding: 12px 20px; }
-        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo { height: 50px; transition: var(--transition); }
-        .logo-text { display: flex; flex-direction: column; }
-        .logo-title { font-size: 20px; font-weight: 800; color: var(--primary-red); font-family: 'Figtree', sans-serif; }
-        .logo-subtitle { font-size: 12px; color: var(--text-secondary); }
-        
-        /* Navigation */
-        .nav-menu ul { list-style: none; }
-        .nav-menu { display: flex; align-items: center; }
-        .nav-list { display: flex; gap: 4px; }
-        .nav-item { position: relative; }
-        .nav-link { color: var(--text-primary); text-decoration: none; font-weight: 600; font-size: 14px; transition: var(--transition); padding: 12px 12px; display: flex; align-items: center; border-radius: 8px; }
-        .nav-link:hover { color: var(--primary-red); background: rgba(193, 39, 45, 0.05); }
-        .nav-link i { margin-left: 4px; font-size: 12px; }
-        .dropdown { position: absolute; top: 100%; left: 0; background: var(--surface-white); width: 200px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); border-radius: 12px; opacity: 0; visibility: hidden; transform: translateY(15px); transition: var(--transition); z-index: 100; padding: 8px 0; }
-        .nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateY(5px); }
-        .dropdown li { list-style: none; }
-        .dropdown a { padding: 10px 16px; font-size: 13px; color: var(--text-secondary); display: block; text-decoration: none; transition: var(--transition); }
-        .dropdown a:hover { color: var(--primary-red); background: rgba(193, 39, 45, 0.05); }
-        .nav-cta { background: var(--primary-red); color: var(--text-on-primary) !important; padding: 10px 20px; border-radius: 8px; transition: var(--transition); margin-left: 8px; text-decoration: none; font-size: 14px; }
-        .nav-cta:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(193, 39, 45, 0.3); }
-        
-        /* Hero Section */
-        .hero {
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-  color: var(--text-on-primary);
-  padding: 290px 0; /* на ПК крупный */
-}
-
-
-.hero-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
-  z-index: 1;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-@media (max-width: 768px) {
-  .hero {
-    padding: 60px 0; /* на телефонах меньше */
-  }
-}
-
-        .hero-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; line-height: 1.2; font-family: 'Figtree', sans-serif; animation: fadeInUp 1s ease-out; }
-        .hero-subtitle { font-size: 1.1rem; margin-bottom: 30px; font-weight: 400; animation: fadeInUp 1s ease-out 0.2s forwards; opacity: 0; }
-        .hero-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 25px; animation: fadeInUp 1s ease-out 0.4s forwards; opacity: 0; }
-        .btn { padding: 14px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
-        .btn i { margin-right: 8px; }
-        .btn-primary { background-color: var(--primary-red); color: var(--text-on-primary); box-shadow: 0 5px 20px rgba(193, 39, 45, 0.4); }
-        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(193, 39, 45, 0.5); }
-        .btn-secondary { background-color: transparent; color: var(--text-on-primary); border: 2px solid var(--text-on-primary); }
-        .btn-secondary:hover { background-color: var(--text-on-primary); color: var(--text-primary); transform: translateY(-5px); }
-        
-        /* General Sections */
-        .section { padding: 70px 0; }
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
-        .section-title { text-align: center; margin-bottom: 50px; }
-        .section-title h2 { font-size: 2.2rem; color: var(--primary-red); margin-bottom: 15px; position: relative; display: inline-block; font-family: 'Figtree', sans-serif; }
-        .section-title h2::after { content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: var(--primary-red); border-radius: 2px; }
-        .section-title p { color: var(--text-secondary); max-width: 700px; margin: 20px auto 0; font-size: 1rem; }
-        
-        /* News Slider */
-        .news-slider { position: relative; overflow: hidden; border-radius: 16px; box-shadow: var(--shadow); height: 400px; }
-        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 30px; color: white; }
-        .slide.active { opacity: 1; }
-        .slide-content { background: linear-gradient(transparent, rgba(0, 0, 0, 0.8)); padding: 20px; border-radius: 12px; width: 100%; transform: translateY(70px); transition: transform 0.5s ease; }
-        .slide.active .slide-content { transform: translateY(0); }
-        .slide-date { font-size: 12px; color: var(--accent); margin-bottom: 8px; display: block; }
-        .slide-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-        .slide-description { font-size: 14px; margin-bottom: 15px; opacity: 0.9; }
-        .slider-nav { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
-        .slider-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); cursor: pointer; transition: var(--transition); }
-        .slider-dot.active { background: var(--primary-red); transform: scale(1.3); }
-        .slider-arrows { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 15px; z-index: 10; transform: translateY(-50%); }
-        .slider-arrow { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; cursor: pointer; transition: var(--transition); backdrop-filter: blur(5px); }
-        .slider-arrow:hover { background: var(--primary-red); transform: scale(1.1); }
-        
-        /* Departments */
-        .departments-grid { display: grid; gap: 25px; grid-template-columns: 1fr; }
-        @media (min-width: 576px) { .departments-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 992px) { .departments-grid { grid-template-columns: repeat(4, 1fr); } }
-        .department-card { background: var(--surface-white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); position: relative; top: 0; }
-        .department-card:hover { top: -12px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
-        .department-img { height: 180px; overflow: hidden; position: relative; }
-        .department-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .department-card:hover .department-img img { transform: scale(1.1); }
-        .department-content { padding: 20px; position: relative; }
-        .department-icon { position: absolute; top: -25px; right: 20px; width: 50px; height: 50px; background: var(--primary-red); color: var(--text-on-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(193, 39, 45, 0.3); }
-        .department-content h3 { font-size: 18px; margin-bottom: 12px; color: var(--primary-dark); padding-right: 60px; }
-        .department-content p { color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
-        .read-more { color: var(--primary-red); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; transition: var(--transition); font-size: 14px; }
-        .read-more:hover { color: var(--primary-dark); }
-        .read-more i { margin-left: 6px; transition: transform 0.3s; }
-        .read-more:hover i { transform: translateX(5px); }
-
-        /* Stats Section */
-        .stats-section { background-color: var(--surface-white); }
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
-        @media (min-width: 992px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
-        .stat-item { text-align: center; padding: 25px 15px; border: 1px solid var(--border-color); border-radius: 16px; transition: var(--transition); }
-        .stat-item:hover { transform: translateY(-8px); box-shadow: var(--shadow); border-color: transparent; }
-        .stat-item .icon { font-size: 40px; color: var(--primary-red); margin-bottom: 15px; }
-        .stat-number { font-size: 2.5rem; font-weight: 700; color: var(--primary-dark); font-family: 'Figtree', sans-serif; }
-        .stat-label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
-
-        /* Digital Space Section */
-        .digital-space { background: var(--surface-white); color: var(--text-primary); position: relative; overflow: hidden; }
-        .digital-space::before { display: none; }
-                .digital-content {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 20px;
-                }
-        .digital-text { flex: 1; padding-right: 40px; }
-        .digital-text h2 { font-size: 2.2rem; margin-bottom: 20px; font-weight: 700; font-family: 'Figtree', sans-serif; color: var(--primary-red); }
-        .digital-text p { font-size: 1rem; margin-bottom: 30px; line-height: 1.7; opacity: 0.9; color: var(--text-secondary); }
-        .digital-btn { background: var(--primary-red); color: var(--text-on-primary); padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; transition: var(--transition); box-shadow: 0 5px 25px rgba(193, 39, 45, 0.3); font-size: 14px; }
-        .digital-btn:hover { background: var(--primary-dark); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(193, 39, 45, 0.4); }
-        .digital-btn i { margin-left: 8px; transition: transform 0.3s; }
-        .digital-btn:hover i { transform: translateX(5px); }
-        .digital-visual { flex: 1; position: relative; }
-        .digital-visual-inner { width: 100%; height: 340px; background: var(--background-light); border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 25px; text-align: center; transition: transform 0.5s ease; }
-        .digital-visual-inner:hover { transform: translateY(-8px); }
-        .digital-icon { font-size: 70px; margin-bottom: 20px; color: var(--primary-red); animation: float 5s ease-in-out infinite; }
-        
-        /* Schedule Section */
-        .schedule-section { background-color: var(--surface-white); }
-        .schedule-links { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 576px) { .schedule-links { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 992px) { .schedule-links { grid-template-columns: repeat(4, 1fr); } }
-        .schedule-card { background: var(--background-light); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; text-decoration: none; color: var(--text-primary); text-align: center; transition: var(--transition); }
-        .schedule-card:hover { transform: translateY(-8px); box-shadow: var(--shadow); border-color: var(--primary-red); }
-        .schedule-card i { font-size: 40px; color: var(--primary-red); margin-bottom: 15px; }
-        .schedule-card h3 { font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 8px; }
-        .schedule-card p { font-size: 0.85rem; color: var(--text-secondary); }
-
-        /* Testimonials Section */
-        .testimonials { background: var(--background-light); }
-        .testimonials-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
-        @media (min-width: 992px) { .testimonials-grid { grid-template-columns: repeat(3, 1fr); } }
-        .testimonial { background: var(--surface-white); border-radius: 16px; box-shadow: var(--shadow); padding: 25px; transition: var(--transition); border: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .testimonial:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); }
-        .testimonial-content { margin-bottom: 15px; font-style: italic; color: var(--text-secondary); line-height: 1.7; position: relative; flex-grow: 1; font-size: 14px; }
-        .testimonial-content::before { content: "\201C"; font-size: 50px; color: var(--primary-red); opacity: 0.2; position: absolute; top: -15px; left: -8px; font-family: sans-serif; }
-        .testimonial-author { display: flex; align-items: center; margin-top: auto; }
-        .author-avatar { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; margin-right: 12px; border: 3px solid var(--primary-red); flex-shrink: 0; }
-        .author-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .author-info h4 { font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; font-size: 15px; }
-        .author-info p { color: var(--text-secondary); font-size: 13px; }
-        
-        /* Footer */
-        .main-footer { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-red) 100%); color: rgba(255, 255, 255, 0.9); margin-top: auto; padding: 50px 0 20px; width: 100%; }
-        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-bottom: 40px; }
-        .footer-column h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #ffffff; position: relative; padding-bottom: 12px; }
-        .footer-column h3::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background-color: var(--accent); }
-        .footer-column p { margin-bottom: 15px; color: rgba(255, 255, 255, 0.8); line-height: 1.7; font-size: 14px; }
-        .footer-links { list-style: none; }
-        .footer-links li { margin-bottom: 10px; }
-        .footer-links a { color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: var(--transition); display: inline-flex; align-items: center; font-size: 14px; }
-        .footer-links a:hover { color: var(--accent); transform: translateX(5px); }
-        .footer-links a i { margin-right: 8px; }
-        .footer-contact-item { display: flex; margin-bottom: 15px; color: rgba(255, 255, 255, 0.8); align-items: flex-start; font-size: 14px; }
-        .footer-contact-item i { margin-right: 12px; color: var(--accent); font-size: 16px; margin-top: 3px; }
-        .footer-social { display: flex; gap: 12px; margin-top: 15px; }
-        .footer-social a { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background-color: rgba(255, 255, 255, 0.1); color: #fff; border-radius: 50%; transition: var(--transition); font-size: 16px; text-decoration: none; }
-        .footer-social a:hover { background-color: var(--accent); transform: translateY(-5px); }
-        .footer-bottom { text-align: center; padding-top: 25px; margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-        .copyright { font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 8px; }
-        .developer { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); }
-        
-        /* Mobile menu button */
-        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--text-primary); cursor: pointer; z-index: 1001; }
-        
-        /* Animation classes */
-        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        
-        /* Responsiveness */
-        @media (max-width: 1200px) { 
-            .hero-title { font-size: 2.2rem; } 
-            .section-title h2 { font-size: 2rem; }
-            .digital-text h2 { font-size: 2rem; }
+        .copy-btn:hover {
+            background-color: #718096;
         }
-        
-                @media (max-width: 992px) {
-                    .nav-menu { 
-                            display: none; 
-                            position: fixed; 
-                            top: 100px; 
-                            left: 0; 
-                            width: 100%; 
-                            background: var(--surface-white); 
-                            flex-direction: column; 
-                            padding: 15px; 
-                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
-                            z-index: 999; 
-                            max-height: calc(100vh - 100px);
-                            overflow-y: auto;
-                    }
-                    .nav-menu.active { display: flex; }
-                    .nav-list { flex-direction: column; width: 100%; gap: 0; }
-                    .nav-item { width: 100%; }
-                    .nav-link { padding: 12px; margin-bottom: 5px; justify-content: space-between; font-size: 15px; }
-                    .dropdown { 
-                            position: static; 
-                            opacity: 1; 
-                            visibility: visible; 
-                            transform: none; 
-                            width: 100%; 
-                            box-shadow: none; 
-                            padding: 8px 0 8px 20px; 
-                            display: none; 
-                            border-radius: 0; 
-                            margin-top: 5px;
-                    }
-                    .dropdown.show { display: block; }
-                    .mobile-menu-btn { display: block; }
-                    .hero-title { font-size: 2rem; }
-                    .hero-subtitle { font-size: 1rem; }
-                    .digital-content {
-                        flex-direction: row;      /* всегда в ряд */
-                        flex-wrap: wrap;          /* разрешаем перенос, если совсем узко */
-                        text-align: left;         /* чтобы текст остался слева */
-                    }
-
-                    .digital-text, 
-                    .digital-visual {
-                        flex: 1 1 50%;            /* два блока по 50% */
-                        min-width: 260px;         /* чтобы не сжималось слишком сильно */
-                    }
-
-                    .digital-text {
-                        padding-right: 20px;
-                    }
-
-                    .digital-visual {
-                        text-align: center;
-                    }
-                    .digital-text { margin-bottom: 40px; }
-                    .section-title h2 { font-size: 1.8rem; }
-                    .footer-content { grid-template-columns: 1fr; text-align: center; }
-                    .footer-column h3::after { left: 50%; transform: translateX(-50%); }
-                    .footer-social { justify-content: center; }
-                    .header-top-content { flex-direction: column; gap: 8px; text-align: center; }
-                    .contact-info { justify-content: center; }
-                }
-        
-        @media (max-width: 768px) {
-            .hero-title { font-size: 1.8rem; }
-            .hero-subtitle { font-size: 0.95rem; }
-            .hero { padding: 60px 0; }
-            .section { padding: 60px 0; }
-            .section-title h2 { font-size: 1.7rem; }
-            .digital-text h2 { font-size: 1.7rem; }
-            .hero-buttons { flex-direction: column; align-items: center; }
-            .btn { width: 100%; max-width: 300px; }
-            .btn:not(:last-child) { margin-bottom: 12px; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .header-main { padding: 10px 15px; }
-            .logo { height: 45px; }
-            .logo-title { font-size: 18px; }
-            .logo-subtitle { font-size: 11px; }
-            .slide-content { padding: 15px; }
-            .slide-title { font-size: 18px; }
-            .slide-description { font-size: 13px; }
-            .footer-content { gap: 25px; }
-            .main-footer { padding: 40px 0 15px; }
+        .nav-link.active {
+            background-color: #e2e8f0;
+            color: #1a202c;
+            font-weight: 600;
         }
-        
-                @media (max-width: 576px) {
-                    .contact-info {
-                        font-size: 11px;
-                        gap: 8px;
-                    }
-                    .social-links a {
-                        font-size: 12px;
-                    }
-                    .header-top-content {
-                        padding: 0 8px;
-                    }
-                    .hero-title { font-size: 1.6rem; }
-                    .section-title h2, .digital-text h2 { font-size: 1.5rem; }
-                    .digital-btn { width: 100%; justify-content: center; }
-                    .social-links { justify-content: center; }
-                    .nav-cta { margin-left: 0; margin-top: 10px; }
-                    .footer-column h3 { font-size: 1.1rem; }
-                    .footer-links a { font-size: 13px; }
-                    .footer-contact-item { font-size: 13px; }
-                    .department-content h3 { font-size: 16px; }
-                    .department-content p { font-size: 13px; }
-                    .testimonial-content { font-size: 13px; }
-                    .author-info h4 { font-size: 14px; }
-                    .author-info p { font-size: 12px; }
-                    .stat-number { font-size: 2rem; }
-                    .stat-label { font-size: 0.8rem; }
-                }
+        .partition-bar {
+            display: flex;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #cbd5e0;
+            width: 100%;
+            background-color: #e2e8f0;
+        }
+        .partition {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .partition.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
     </style>
 </head>
-<body>
-    <div class="bg-element bg-element-1"></div>
-    <div class="bg-element bg-element-2"></div>
-    <div class="bg-element bg-element-3"></div>
-    <div class="bg-element bg-element-4"></div>
+<body class="font-sans">
 
-    <header class="main-header">
-        <div class="header-top">
-            <div class="header-top-content">
-                <div class="contact-info">
-                    <span><i class="fas fa-envelope"></i> +996 (312) 54-19-42</span>
-                    <span><i class="fas fa-envelope"></i> info@pc.edu.kg</span>
-                </div>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/pc.iuk.mukr.kg/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.youtube.com/channel/UC1ick_tSmhXRuZMUU0hINcw" target="_blank"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.instagram.com/pc.iuk.kg" target="_blank"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="header-main">
-            <a href="/" class="logo-container">
-                <img src="iuk.png" alt="logo pc iuk" class="logo">
-                <div class="logo-text">
-                    <div class="logo-title">PC IUK</div>
-                    <div class="logo-subtitle">Политехнический колледж МУКР</div>
-                </div>
-            </a>
-            <nav class="nav-menu" id="navMenu">
-                <ul class="nav-list">
-                    <li class="nav-item"> <a href="#" class="nav-link">Главная</a> </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Образование <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/uchebnyj-protsess" target="_blank">Учебный процесс</a></li>
-                            <li><a href="https://pc.edu.kg/metodicheskaya-rabota" target="_blank">Методическая работа</a></li>
-                            <li><a href="https://pc.edu.kg/vospitatelnaya-rabota" target="_blank">Воспитательная работа</a></li>
-                            <li><a href="https://pc.edu.kg/pedsovet" target="_blank">Педсовет</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Студенты <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/studentu" target="_blank">Студенту</a></li>
-                            <li><a href="https://pc.edu.kg/abiturientu" target="_blank">Абитуриенту</a></li>
-                            <li><a href="https://pc.edu.kg/sovet-studencheskogo-samoupravlenie" target="_blank">Совет студенческого самоуправления</a></li>
-                            <li><a href="https://pc.edu.kg/s" target="_blank">Выпускники</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Колледж <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/istoriya" target="_blank">История</a></li>
-                            <li><a href="https://pc.edu.kg/missiya" target="_blank">Миссия</a></li>
-                            <li><a href="https://pc.edu.kg/materialno-tekhnicheskaya-baza" target="_blank">Материально-техническая база</a></li>
-                            <li><a href="https://pc.edu.kg/sotrudnichestvo" target="_blank">Сотрудничество</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Информация <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/novosti" target="_blank">Новости</a></li>
-                            <li><a href="https://pc.edu.kg/antikorruptsionnaya-rabota" target="_blank">Антикоррупционная работа</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"> <a href="https://pc.edu.kg/contact" class="nav-link">Контакты</a> </li>
+    <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-8 p-4 md:p-8">
+        
+        <aside class="w-full md:w-1/4 lg:w-1/5">
+            <nav id="sidebar" class="sticky top-8 bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">Этапы установки</h3>
+                <ul class="space-y-2">
+                    <li><a href="#step-1" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">1. Подготовка</a></li>
+                    <li><a href="#step-2" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">2. Интернет</a></li>
+                    <li><a href="#step-3" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">3. Разметка диска</a></li>
+                    <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">4. Форматирование</a></li>
+                    <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">5. Установка системы</a></li>
+                    <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">6. Chroot и настройка</a></li>
+                    <li><a href="#step-7" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">7. Загрузчик GRUB</a></li>
+                    <li><a href="#step-8" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">8. Финальная настройка</a></li>
+                    <li><a href="#step-9" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">9. Графическая оболочка</a></li>
                 </ul>
             </nav>
-            <!-- <nav class="nav-menu" id="navMenu">
-                <ul class="nav-list">
-                    <li class="nav-item"> <a href="#" class="nav-link">Главная</a> </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Студенту <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/studentu" target="_blank">Информация для студентов</a></li>
-                            <li><a href="https://pc.edu.kg/index.php?option=com_rspagebuilder&view=page&id=26" target="_blank">Расписание занятий</a></li>
-                            <li><a href="https://pc.edu.kg/meropriyatiya" target="_blank">Мероприятия</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Абитуриенту <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/abiturientu" target="_blank">Информация для абитуриентов</a></li>
-                            <li><a href="https://pc.edu.kg/specialnosti" target="_blank">Специальности</a></li>
-                            <li><a href="https://pc.edu.kg/priemnaya-kampaniya" target="_blank">Приёмная кампания</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Отделения <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown">
-                            <li><a href="https://pc.edu.kg/it-otdelenie" target="_blank">IT отделение</a></li>
-                            <li><a href="https://pc.edu.kg/energo-otdelenie" target="_blank">Энергоотделение</a></li>
-                            <li><a href="https://pc.edu.kg/setevye-tehnologii" target="_blank">Сетевые технологии</a></li>
-                            <li><a href="https://pc.edu.kg/svyaz-otdelenie" target="_blank">Отделение связи</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"> <a href="https://pc.edu.kg/novosti" class="nav-link">Новости</a> </li>
-                    <li class="nav-item"> <a href="https://pc.edu.kg/contact" class="nav-link">Контакты</a> </li>
-                </ul>
-            </nav> -->
-            <a href="https://pc.edu.kg/abiturientu" class="nav-cta">Поступить</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn"> <i class="fas fa-bars"></i> </button>
-        </div>
-    </header>
+        </aside>
 
-    <main>
-        <section class="hero">
-  <img src="https://iuk.kg/wp-content/uploads/2022/02/2342534.jpg" alt="Hero" class="hero-img">
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <h1 class="hero-title">Политехнический колледж МУКР</h1>
-    <p class="hero-subtitle">Здесь начинается твой путь к успеху!</p>
-    <div class="hero-buttons">
-      <a href="https://pc.edu.kg/abiturientu" class="btn btn-primary"><i class="fas fa-graduation-cap"></i> Поступить в колледж</a>
-      <a href="https://pc.edu.kg/info" class="btn btn-secondary"><i class="fas fa-info-circle"></i> Узнать больше</a>
+        <main class="w-full md:w-3/4 lg:w-4/5">
+            <header class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Руководство по установке Arch Linux</h1>
+                <p class="text-lg text-gray-600">Интерактивное пошаговое руководство для успешной установки и настройки системы с графическим интерфейсом на виртуальной машине (UEFI).</p>
+            </header>
+
+            <div id="content" class="space-y-8">
+                
+                <section id="step-1" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Подготовка</h2>
+                    <p class="mb-4 text-gray-700">Перед началом убедитесь, что вы скачали образ Arch Linux с <a href="https://www.archlinux.org/download/" target="_blank" class="text-blue-600 hover:underline">официального сайта</a> и подготовили загрузочный носитель. Также ознакомьтесь с базовыми командами редактора Vim.</p>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Команды для Vim:</h4>
+                        <ul class="list-disc list-inside text-gray-700 grid grid-cols-2 gap-x-4">
+                            <li><code class="font-mono">i</code> - Режим ввода</li>
+                            <li><code class="font-mono">Esc</code> - Обычный режим</li>
+                            <li><code class="font-mono">:w</code> - Сохранить</li>
+                            <li><code class="font-mono">:q</code> - Выйти</li>
+                            <li><code class="font-mono">:wq</code> - Сохранить и выйти</li>
+                            <li><code class="font-mono">:q!</code> - Выйти без сохранения</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="step-2" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">2. Настройка интернета</h2>
+                    <p class="mb-4 text-gray-700">После загрузки с установочного носителя необходимо подключиться к интернету. Проводное подключение должно определиться автоматически. Для Wi-Fi используйте утилиту `iwctl`.</p>
+                    <p class="text-gray-600 text-sm mb-2">Команда для проверки соединения:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">ping -c 3 archlinux.org</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Команды для Wi-Fi (выполняйте их по порядку):</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">iwctl</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm my-2">Найти имя вашего устройства (например, `wlan0`):</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">device list</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm my-2">Включить устройство (замените `&lt;имя_устройства&gt;`):</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">device &lt;имя_устройства&gt; set-property Powered on</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm my-2">Просканировать сети:</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">station &lt;имя_устройства&gt; scan</code></pre>
+                    </div>
+                     <p class="text-gray-600 text-sm my-2">Посмотреть список сетей:</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">station &lt;имя_устройства&gt; get-networks</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm my-2">Подключиться к сети (замените `&lt;SSID&gt;`):</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">station &lt;имя_устройства&gt; connect &lt;SSID&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm my-2">Выйти из утилиты:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">exit</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-3" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">3. Разметка диска</h2>
+                    <p class="mb-4 text-gray-700">Это самый ответственный этап. Мы создадим GPT-таблицу и четыре раздела для UEFI-системы. Внимательно проверьте имя диска (например, `/dev/sda`).</p>
+                     <div class="mb-6">
+                        <h4 class="font-semibold mb-2 text-center text-gray-700">Интерактивная схема разделов</h4>
+                        <div id="partition-visualizer" class="partition-bar shadow-inner">
+                            <div id="part-efi" class="partition" style="width: 10%; background-color: #6366f1;">EFI</div>
+                            <div id="part-swap" class="partition" style="width: 15%; background-color: #ec4899;">Swap</div>
+                            <div id="part-root" class="partition" style="width: 30%; background-color: #22c55e;">/ (Root)</div>
+                            <div id="part-home" class="partition" style="width: 45%; background-color: #f97316;">/home</div>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 mb-6 text-gray-700">
+                        <li data-target="part-efi"><strong>EFI-раздел</strong> (550 МБ): Системный раздел для загрузчика UEFI.</li>
+                        <li data-target="part-swap"><strong>Swap-раздел</strong> (ОЗУ + 1-2 ГБ): Файл подкачки, используется при нехватке оперативной памяти.</li>
+                        <li data-target="part-root"><strong>Корневой раздел (`/`)</strong> (от 40 ГБ): Здесь будет установлена сама система.</li>
+                        <li data-target="part-home"><strong>Домашний раздел (`/home`)</strong> (остальное место): Для ваших личных файлов.</li>
+                    </ul>
+                    <p class="text-gray-600 text-sm mb-2">Просмотр списка дисков:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">fdisk -l</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Запуск утилиты `fdisk` (замените `&lt;диск&gt;` на ваше имя диска):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">fdisk /dev/&lt;диск&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Команды внутри утилиты `fdisk` (нажимайте `Enter` после каждой команды):</p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                         <ul class="list-disc list-inside space-y-2">
+                             <li>Создать GPT таблицу: <code class="font-mono">g</code></li>
+                             <li>Создать EFI раздел: <code class="font-mono">n</code>, затем <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">+550M</code>, <code class="font-mono">Enter</code>. Установить тип: <code class="font-mono">t</code>, <code class="font-mono">1</code>, <code class="font-mono">Enter</code>.</li>
+                             <li>Создать Swap раздел: <code class="font-mono">n</code>, затем <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">+2G</code> (например), <code class="font-mono">Enter</code>. Установить тип: <code class="font-mono">t</code>, <code class="font-mono">19</code>, <code class="font-mono">Enter</code>.</li>
+                             <li>Создать корневой раздел: <code class="font-mono">n</code>, затем <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">+40G</code>, <code class="font-mono">Enter</code>.</li>
+                             <li>Создать домашний раздел (на оставшемся месте): <code class="font-mono">n</code>, <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>.</li>
+                             <li>Просмотреть результат: <code class="font-mono">p</code>, <code class="font-mono">Enter</code>.</li>
+                             <li>Записать изменения и выйти: <code class="font-mono">w</code>, <code class="font-mono">Enter</code>.</li>
+                         </ul>
+                    </div>
+                </section>
+
+                <section id="step-4" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">4. Форматирование и монтирование</h2>
+                    <p class="mb-4 text-gray-700">Теперь нужно отформатировать созданные разделы в нужные файловые системы и смонтировать их. Используйте `fdisk -l` чтобы увидеть имена ваших разделов (например, `/dev/sda1`, `/dev/sda2`).</p>
+                    <p class="text-gray-600 text-sm mb-2">Форматирование EFI-раздела:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mkfs.fat -F32 /dev/&lt;раздел_efi&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Форматирование Swap-раздела и его активация:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mkswap /dev/&lt;раздел_swap&gt;</code></pre>
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">swapon /dev/&lt;раздел_swap&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Форматирование корневого (`/`) и домашнего (`/home`) разделов:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mkfs.ext4 /dev/&lt;раздел_root&gt;</code></pre>
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mkfs.ext4 /dev/&lt;раздел_home&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Монтирование разделов:</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mount /dev/&lt;раздел_root&gt; /mnt</code></pre>
+                    </div>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mkdir -p /mnt/home</code></pre>
+                    </div>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mount /dev/&lt;раздел_home&gt; /mnt/home</code></pre>
+                    </div>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mkdir -p /mnt/boot/efi</code></pre>
+                    </div>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">mount /dev/&lt;раздел_efi&gt; /mnt/boot/efi</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-5" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">5. Установка системы</h2>
+                    <p class="mb-4 text-gray-700">Устанавливаем базовую систему, ядро и драйверы. Затем генерируем файл `fstab`, который сообщает системе, какие разделы монтировать при загрузке.</p>
+                    <p class="text-gray-600 text-sm mb-2">Установка базовых пакетов (может занять время):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">pacstrap /mnt base linux linux-firmware</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Генерация fstab:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">genfstab -U /mnt >> /mnt/etc/fstab</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Проверка fstab (опционально):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">cat /mnt/etc/fstab</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-6" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">6. Chroot и базовая настройка</h2>
+                    <p class="mb-4 text-gray-700">Переходим в установленную систему (`chroot`), чтобы выполнить её первоначальную настройку: время, язык, имя компьютера и создание пользователя.</p>
+                    <p class="text-gray-600 text-sm mb-2">Вход в новую систему:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">arch-chroot /mnt</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка времени (замените на свой регион/город):</p>
+                    <div class="code-block mb-2">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime</code></pre>
+                    </div>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">hwclock --systohc</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка локализации (откройте файл и раскомментируйте `en_US.UTF-8` и `ru_RU.UTF-8`):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">vim /etc/locale.gen</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Генерация локалей:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">locale-gen</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Установка языка системы:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">echo "LANG=ru_RU.UTF-8" > /etc/locale.conf</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка имени компьютера:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">vim /etc/hostname</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка хостов (откройте файл и добавьте строки, заменив `&lt;имя_компьютера&gt;`):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">vim /etc/hosts</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Пароль для root:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">passwd</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Создание пользователя (замените `&lt;имя_пользователя&gt;`):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">useradd -m -G wheel,audio,video,storage,network,power &lt;имя_пользователя&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Установка пароля для нового пользователя:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">passwd &lt;имя_пользователя&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Установка `sudo`:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">pacman -S sudo</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка `sudoers` (в открывшемся файле раскомментируйте `%wheel ALL=(ALL) ALL`):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">EDITOR=vim visudo</code></pre>
+                    </div>
+                </section>
+                
+                <section id="step-7" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">7. Установка загрузчика GRUB</h2>
+                    <p class="mb-4 text-gray-700">GRUB — это программа, которая будет загружать вашу новую операционную систему. Установим и настроим его для UEFI.</p>
+                    <p class="text-gray-600 text-sm mb-2">Установка пакетов:</p>
+                     <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">pacman -S grub efibootmgr</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Установка GRUB в EFI раздел:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Создание конфигурационного файла:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">grub-mkconfig -o /boot/grub/grub.cfg</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-8" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">8. Финальная настройка и первый запуск</h2>
+                    <p class="mb-4 text-gray-700">Устанавливаем утилиты для работы сети, выходим из chroot и перезагружаемся в установленную систему. После перезагрузки нужно будет снова подключиться к интернету и обновить пакеты.</p>
+                    <p class="text-gray-600 text-sm mb-2">Установка сетевых утилит:</p>
+                     <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">pacman -S dhcpcd iwd</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Выход из chroot:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">exit</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Размонтирование разделов:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">umount -R /mnt</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Перезагрузка (не забудьте вытащить флешку):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">reboot</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mt-6 mb-2">--- После перезагрузки и входа под своим пользователем ---</p>
+                    <p class="text-gray-600 text-sm mb-2">Включите автозапуск сетевых служб (выполнять после подключения к интернету):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo systemctl enable dhcpcd.service</code></pre>
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo systemctl enable iwd.service</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Откройте файл `/etc/pacman.conf` и раскомментируйте секцию `[multilib]`:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo vim /etc/pacman.conf</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Обновите систему:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo pacman -Syu</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-9" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">9. Установка графической оболочки (i3)</h2>
+                    <p class="mb-4 text-gray-700">Почти готово! Устанавливаем графический сервер Xorg, оконный менеджер i3, эмулятор терминала и шрифты. Затем настраиваем автозапуск.</p>
+                    <p class="text-gray-600 text-sm mb-2">Установка Xorg и i3-gaps (улучшенная версия i3):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo pacman -S xorg xorg-xinit xorg-server i3-gaps</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Установка терминала и шрифтов:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo pacman -S alacritty ttf-jetbrains-mono</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка автозапуска i3 при старте X-сервера:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">echo "exec i3" > ~/.xinitrc</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Добавление автозапуска графической оболочки при входе в систему:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash"># Добавьте эту строку в конец файла ~/.bash_profile или ~/.zprofile:
+if [[ -z "$DISPLAY" && "$XDG_VTNR" -eq 1 ]]; then exec startx; fi</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Запуск графической оболочки вручную:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">startx</code></pre>
+                    </div>
+                    <div class="mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                        <p class="font-bold">Поздравляю!</p>
+                        <p>Вы успешно установили и настроили Arch Linux. Теперь у вас есть минималистичная, быстрая и полностью контролируемая система.</p>
+                    </div>
+                </section>
+
+            </div>
+        </main>
     </div>
-  </div>
-</section>
 
-        
-        <section class="section digital-space">
-            <div class="container">
-                <div class="digital-content">
-                    <div class="digital-text">
-                        <h2>Цифровое образовательное пространство</h2>
-                        <p>Инновационная платформа для обучения, совместной работы и проектной деятельности. Доступ к современным цифровым ресурсам, виртуальным лабораториям и онлайн-курсам.</p>
-                        <a href="https://info.pc.edu.kg/" class="digital-btn">Перейти в пространство <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                    <div class="digital-visual">
-                        <div class="digital-visual-inner">
-                            <div class="digital-icon"> <i class="fas fa-cloud"></i> </div>
-                            <h3>Виртуальная среда</h3>
-                            <p>Доступ 24/7 с любого устройства</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section schedule-section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Расписание занятий</h2>
-                    <p>Актуальное расписание и замены для всех курсов</p>
-                </div>
-                <div class="schedule-links">
-                    <a href="https://pc.edu.kg/raspisanie/1-kurs" class="schedule-card" target="_blank">
-                        <i class="fas fa-file-pdf"></i>
-                        <h3>Расписание 1 курс</h3>
-                        <p>(скачать PDF)</p>
-                    </a>
-                    <a href="https://pc.edu.kg/raspisanie/2-kurs" class="schedule-card" target="_blank">
-                        <i class="fas fa-file-pdf"></i>
-                        <h3>Расписание 2 курс</h3>
-                        <p>(скачать PDF)</p>
-                    </a>
-                    <a href="https://pc.edu.kg/raspisanie/3-kurs" class="schedule-card" target="_blank">
-                        <i class="fas fa-file-pdf"></i>
-                        <h3>Расписание 3 курс</h3>
-                        <p>(скачать PDF)</p>
-                    </a>
-                    <a href="https://pc.edu.kg/zameny" class="schedule-card" target="_blank">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>Замены на неделю</h3>
-                        <p>(скачать PDF)</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Последние новости</h2>
-                    <p>Будьте в курсе событий нашего колледжа</p>
-                </div>
-                <div class="news-slider">
-                    <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80');">
-                        <div class="slide-content">
-                            <span class="slide-date"><i class="far fa-calendar"></i> 15 сентября 2023</span>
-                            <h3 class="slide-title">День открытых дверей</h3>
-                            <p class="slide-description">Приглашаем всех желающих на день открытых дверей, который состоится 25 сентября в 15:00 в главном корпусе колледжа.</p>
-                            <a href="https://pc.edu.kg/novosti/den-otkrytyh-dverej" class="read-more" style="color: white;">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80');">
-                        <div class="slide-content">
-                            <span class="slide-date"><i class="far fa-calendar"></i> 10 сентября 2023</span>
-                            <h3 class="slide-title">Новая лаборатория сетевых технологий</h3>
-                            <p class="slide-description">В колледже открыта новая лаборатория сетевых технологий с современным оборудованием Cisco и Juniper.</p>
-                             <a href="https://pc.edu.kg/novosti/novaya-laboratoriya" class="read-more" style="color: white;">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80');">
-                        <div class="slide-content">
-                            <span class="slide-date"><i class="far fa-calendar"></i> 5 сентября 2023</span>
-                            <h3 class="slide-title">Студенческая конференция</h3>
-                            <p class="slide-description">Приглашаем студентов принять участие в ежегодной научно-практической конференции "Инновации в IT и телекоммуникациях".</p>
-                            <a href="https://pc.edu.kg/novosti/konferentsiya" class="read-more" style="color: white;">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <div class="slider-dot active"></div>
-                        <div class="slider-dot"></div>
-                        <div class="slider-dot"></div>
-                    </div>
-                    <div class="slider-arrows">
-                        <div class="slider-arrow prev"><i class="fas fa-chevron-left"></i></div>
-                        <div class="slider-arrow next"><i class="fas fa-chevron-right"></i></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Наши отделения</h2>
-                    <p>Мы предлагаем качественное образование по востребованным специальностям</p>
-                </div>
-                <div class="departments-grid">
-                    <div class="department-card fade-in">
-                        <div class="department-img"> <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="IT отделение"> </div>
-                        <div class="department-content">
-                            <div class="department-icon"> <i class="fas fa-laptop-code"></i> </div>
-                            <h3>IT отделение</h3>
-                            <p>Подготовка специалистов в области программирования, веб-разработки, искусственного интеллекта и кибербезопасности. Обучение на базе 9 и 11 классов.</p>
-                            <a href="https://pc.edu.kg/it-otdelenie" class="read-more">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="department-card fade-in">
-                        <div class="department-img"> <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Энергоотделение"> </div>
-                        <div class="department-content">
-                            <div class="department-icon"> <i class="fas fa-bolt"></i> </div>
-                            <h3>Энергоотделение</h3>
-                            <p>Подготовка специалистов в области энергетики, энергосберегающих технологий и возобновляемых источников энергии. Обучение на базе 9 и 11 классов.</p>
-                            <a href="https://pc.edu.kg/energo-otdelenie" class="read-more">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="department-card fade-in">
-                        <div class="department-img"> <img src="https://images.unsplash.com/photo-1586769852044-3d8f2be5d037?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Отделение связи"> </div>
-                        <div class="department-content">
-                            <div class="department-icon"> <i class="fas fa-broadcast-tower"></i> </div>
-                            <h3>Отделение связи</h3>
-                            <p>Подготовка специалистов в области телекоммуникаций, сетей связи и спутниковых технологий. Обучение на базе 9 и 11 классов.</p>
-                            <a href="https://pc.edu.kg/svyaz-otdelenie" class="read-more">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="department-card fade-in">
-                        <div class="department-img"> <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Отд. Сетевых технологий"> </div>
-                        <div class="department-content">
-                            <div class="department-icon"> <i class="fas fa-network-wired"></i> </div>
-                            <h3>Сетевые технологии</h3>
-                            <p>Подготовка специалистов в области проектирования, построения и администрирования компьютерных сетей. Обучение на базе 9 и 11 классов.</p>
-                            <a href="https://pc.edu.kg/setevye-tehnologii" class="read-more">Подробнее <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="section stats-section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Наши достижения в цифрах</h2>
-                    <p>Мы гордимся нашими результатами и успехами наших студентов</p>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <i class="fas fa-users icon"></i>
-                        <div class="stat-number" data-target="1001">0</div>
-                        <p class="stat-label">Студентов</p>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-chalkboard-teacher icon"></i>
-                        <div class="stat-number" data-target="85">0</div>
-                        <p class="stat-label">Преподавателей</p>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-briefcase icon"></i>
-                        <div class="stat-number" data-target="92">0%</div>
-                        <p class="stat-label">Трудоустройство</p>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-calendar-alt icon"></i>
-                        <div class="stat-number" data-target="25">0</div>
-                        <p class="stat-label">Лет успешной работы</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section testimonials">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Отзывы студентов</h2>
-                    <p>Что говорят наши студенты о колледже</p>
-                </div>
-                <div class="testimonials-grid">
-                    <div class="testimonial fade-in">
-                        <div class="testimonial-content"> "Обучение в колледже дало мне не только теоретические знания, но и практические навыки, которые я сразу смог применить на практике. Преподаватели всегда готовы помочь и объяснить сложные темы." </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar"> <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Алексей Петров"> </div>
-                            <div class="author-info">
-                                <h4>Алексей Петров</h4>
-                                <p>Студент IT отделения, 3 курс</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial fade-in">
-                        <div class="testimonial-content"> "Я выбрала энергоотделение и ни разу не пожалела! Современное оборудование в лабораториях позволяет на практике изучать все процессы. После выпуска у меня уже есть предложения о работе." </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar"> <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Мария Иванова"> </div>
-                            <div class="author-info">
-                                <h4>Мария Иванова</h4>
-                                <p>Студентка энергоотделения, 4 курс</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial fade-in">
-                        <div class="testimonial-content"> "Цифровое пространство колледжа - это невероятно удобно! Все материалы доступны онлайн, можно общаться с преподавателями и одногруппниками. Это действительно современный подход к образованию." </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar"> <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Дмитрий Смирнов"> </div>
-                            <div class="author-info">
-                                <h4>Дмитрий Смирнов</h4>
-                                <p>Студент отделения связи, 2 курс</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>О колледже</h3>
-                    <p>Политехнический колледж МУКР - современное образовательное учреждение, предоставляющее качественное профессиональное образование по востребованным специальностям.</p>
-                    <div class="footer-social">
-                        <a href="https://www.facebook.com/pc.iuk.mukr.kg/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.youtube.com/channel/UC1ick_tSmhXRuZMUU0hINcw" target="_blank"><i class="fab fa-youtube"></i></a>
-                        <a href="https://www.instagram.com/pc.iuk.kg" target="_blank"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Отделения</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://pc.edu.kg/it-otdelenie" target="_blank"><i class="fas fa-chevron-right"></i> IT отделение</a></li>
-                        <li><a href="https://pc.edu.kg/energo-otdelenie" target="_blank"><i class="fas fa-chevron-right"></i> Энергоотделение</a></li>
-                        <li><a href="https://pc.edu.kg/svyaz-otdelenie" target="_blank"><i class="fas fa-chevron-right"></i> Отделение связи</a></li>
-                        <li><a href="https://pc.edu.kg/setevye-tehnologii" target="_blank"><i class="fas fa-chevron-right"></i> Сетевые технологии</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Полезные ссылки</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://pc.edu.kg/abiturientu" target="_blank"><i class="fas fa-chevron-right"></i> Абитуриенту</a></li>
-                        <li><a href="https://pc.edu.kg/studentu" target="_blank"><i class="fas fa-chevron-right"></i> Студенту</a></li>
-                        <li><a href="https://pc.edu.kg/novosti" target="_blank"><i class="fas fa-chevron-right"></i> Новости</a></li>
-                        <li><a href="https://info.pc.edu.kg/" target="_blank"><i class="fas fa-chevron-right"></i> Цифровое пространство</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Контакты</h3>
-                    <div class="footer-contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>г. Бишкек, Кыргызстан</span>
-                    </div>
-                    <div class="footer-contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>+996 (312) 54-19-42</span>
-                    </div>
-                    <div class="footer-contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>info@pc.edu.kg</span>
-                    </div>
-                    <div class="footer-contact-item">
-                        <i class="fas fa-clock"></i>
-                        <span>Пн-Пт: 9:00 - 18:00</span>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p class="copyright">&copy; 2023 Политехнический колледж МУКР. Все права защищены.</p>
-                <p class="developer">Разработано с <i class="fas fa-heart" style="color: var(--accent);"></i> для образования</p>
-            </div>
-        </div>
-    </footer>
-    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const navMenu = document.getElementById('navMenu');
-            mobileMenuBtn.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-                mobileMenuBtn.innerHTML = navMenu.classList.contains('active') ? 
-                    '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-            });
-            
-            // Mobile dropdowns
-            document.querySelectorAll('.nav-item').forEach(item => {
-                const link = item.querySelector('.nav-link');
-                const dropdown = item.querySelector('.dropdown');
-                if (dropdown) {
-                    link.addEventListener('click', function(e) {
-                        if (window.innerWidth <= 992) {
-                            e.preventDefault();
-                            document.querySelectorAll('.dropdown.show').forEach(d => {
-                                if (d !== dropdown) d.classList.remove('show');
-                            });
-                            dropdown.classList.toggle('show');
-                        }
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const code = button.nextElementSibling.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        button.textContent = 'Скопировано!';
+                        setTimeout(() => {
+                            button.textContent = 'Копировать';
+                        }, 2000);
                     });
-                }
+                });
             });
 
-            // News slider
-            const slides = document.querySelectorAll('.slide');
-            if (slides.length > 0) {
-                const dots = document.querySelectorAll('.slider-dot');
-                const prevBtn = document.querySelector('.slider-arrow.prev');
-                const nextBtn = document.querySelector('.slider-arrow.next');
-                let currentSlide = 0;
-                let slideInterval;
-                const showSlide = (n) => {
-                    slides.forEach(s => s.classList.remove('active'));
-                    dots.forEach(d => d.classList.remove('active'));
-                    currentSlide = (n + slides.length) % slides.length;
-                    slides[currentSlide].classList.add('active');
-                    dots[currentSlide].classList.add('active');
-                };
-                const nextSlide = () => showSlide(currentSlide + 1);
-                const startSlider = () => slideInterval = setInterval(nextSlide, 5000);
-                const stopSlider = () => clearInterval(slideInterval);
-                nextBtn.addEventListener('click', () => { stopSlider(); nextSlide(); startSlider(); });
-                prevBtn.addEventListener('click', () => { stopSlider(); showSlide(currentSlide - 1); startSlider(); });
-                dots.forEach((dot, i) => dot.addEventListener('click', () => { stopSlider(); showSlide(i); startSlider(); }));
-                startSlider();
-            }
-            
-            // Intersection Observer for fade-in animations
-            const fadeInElements = document.querySelectorAll('.fade-in');
-            const fadeInObserver = new IntersectionObserver((entries) => {
+            const sections = document.querySelectorAll('.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
                     }
                 });
-            }, { threshold: 0.1 });
-            fadeInElements.forEach(el => fadeInObserver.observe(el));
+            }, { rootMargin: '-50% 0px -50% 0px' });
 
-            // Animated counters
-            const statsSection = document.querySelector('.stats-section');
-            const statNumbers = document.querySelectorAll('.stat-number');
-            const startCounter = (el) => {
-                const target = parseInt(el.dataset.target, 10);
-                const isPercent = el.innerHTML.includes('%');
-                let count = 0;
-                const duration = 2000;
-                const increment = target / (duration / 16);
+            sections.forEach(section => {
+                observer.observe(section);
+            });
 
-                const updateCount = () => {
-                    count += increment;
-                    if (count < target) {
-                        el.innerText = Math.ceil(count) + (isPercent ? '%' : '');
-                        requestAnimationFrame(updateCount);
-                    } else {
-                        el.innerText = target + (isPercent ? '%' : '');
-                    }
-                };
-                requestAnimationFrame(updateCount);
-            };
+            const partitionHighlights = document.querySelectorAll('#step-3 ul li');
+            partitionHighlights.forEach(li => {
+                const targetId = li.dataset.target;
+                const targetElement = document.getElementById(targetId);
 
-            const statsObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        statNumbers.forEach(num => startCounter(num));
-                        observer.unobserve(entry.target);
-                    }
+                li.addEventListener('mouseover', () => {
+                    targetElement.classList.add('highlight');
                 });
-            }, { threshold: 0.5 });
-            
-            if (statsSection) {
-                statsObserver.observe(statsSection);
-            }
+                li.addEventListener('mouseout', () => {
+                    targetElement.classList.remove('highlight');
+                });
+            });
         });
     </script>
 </body>
