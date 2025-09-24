@@ -1,76 +1,665 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>labs by maratbekov</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background-image: url('back.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        /* Лёгкий тёмный оверлей поверх фонового изображения */
-        .bg-overlay {
-            position: fixed;
-            inset: 0; /* top:0; right:0; bottom:0; left:0 */
-            background-color: rgba(0, 0, 0, 0.22); /* регулируйте альфа для силы затемнения */
-            pointer-events: none; /* не мешаем кликам */
-            z-index: 0;
-        }
-        .glass-container {
-            backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>labs by maratbekov</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            animation: fadeInDown 1s ease;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+        .logo-square {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: rotate 10s infinite linear;
+        }
+        .logo-circle {
+            width: 20px;
+            height: 20px;
+            background: var(--text);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            animation: pulse 2s infinite alternate;
+        }
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .logo span {
+            font-weight: 300;
+            color: var(--text-secondary);
+        }
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            padding: 80px 0;
+            min-height: 80vh;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero-title span {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+        .cta-button {
+            background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 42, 42, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(255, 42, 42, 0.4);
+        }
+        .ghost-button {
+            background: transparent;
+            border: 2px solid var(--accent);
+            padding: 13px 38px;
+            border-radius: 30px;
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .ghost-button:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-5px);
+        }
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .floating-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+        .card-content h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .card-content p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .security-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .security-indicator span {
+            font-size: 0.9rem;
+            color: var(--success-green);
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+            padding-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .features {
+            padding: 100px 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .feature {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .feature h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .feature p {
+            color: var(--text-secondary);
+        }
+        .game-section {
+            padding: 100px 0;
+        }
+        .quiz-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .quiz-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .progress-bar {
+            width: 300px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 20%;
+            background: var(--accent);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-body {
+            margin-bottom: 40px;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-container h3 {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .option:hover {
+            background: rgba(255, 42, 42, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .quiz-btn {
+            background: var(--accent);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-btn:hover {
+            background: var(--accent-dark);
+        }
+        .info-section {
+            padding: 100px 0;
+        }
+        .rules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .rule {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+        }
+        .rule-number {
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rule h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rule p {
+            color: var(--text-secondary);
+        }
+        .footer {
+            margin-top: 100px;
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .footer-section p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .access-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .access-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .access-links a:hover {
+            color: var(--accent);
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 30px;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav {
+                display: none;
+            }
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            .quiz-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            .progress-bar {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal text-white">
-    <!-- Overlay для затемнения фонового изображения -->
-    <div class="bg-overlay" aria-hidden="true"></div>
-    <div class="container mx-auto p-4 md:p-8 relative z-10">
-        <header class="text-center my-12 rounded-xl p-8 shadow-inner glass-container">
-            <h1 class="text-3xl md:text-4xl font-extrabold">labs by maratbekov</h1>
-            <p class="mt-2 text-lg md:text-xl text-gray-200">Сборник интерактивных проектов</p>
-        </header>
-        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <a href="arch.html" class="block">
-                <div class="rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:scale-105 overflow-hidden glass-container">
-                    <div class="p-6">
-                        <div class="text-5xl mb-4">💻</div>
-                        <h2 class="text-xl font-bold mb-2">Интерактивное руководство по установке Arch Linux</h2>
-                        <p class="text-gray-200">Пошаговая инструкция для установки и настройки Arch Linux на виртуальной машине с удобным интерфейсом.</p>
-                        <div class="mt-4 inline-block bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-300">
-                            Открыть
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="freebsd.html" class="block">
-                <div class="rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:scale-105 overflow-hidden glass-container">
-                    <div class="p-6">
-                        <div class="text-5xl mb-4">😈</div>
-                        <h2 class="text-xl font-bold mb-2">Интерактивное руководство по установке FreeBSD</h2>
-                        <p class="text-gray-200">Пошаговая инструкция для установки и настройки FreeBSD на виртуальной машине с удобным интерфейсом.</p>
-                        <div class="mt-4 inline-block bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-300">
-                            Открыть
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <div class="rounded-xl shadow-md p-6 flex flex-col justify-between glass-container">
-                <div>
-                    <div class="text-5xl mb-4 text-gray-200">🚧</div>
-                    <h2 class="text-xl font-bold text-gray-200 mb-2">Проект 3</h2>
-                    <p class="text-gray-200">...</p>
-                </div>
-                <div class="mt-4 inline-block bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-full">
-                    В разработке
-                </div>
-            </div>
-        </main>
-    </div>
+    <!-- Фоновая анимация -->
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <header class="text-center my-12 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white">labs by maratbekov</h1>
+            <p class="mt-2 text-lg md:text-xl text-gray-200">Сборник интерактивных проектов</p>
+        </header>
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <a href="arch.html" class="block">
+                <div class="rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 hover:border-[#ff2a2a]/50">
+                    <div class="p-6">
+                        <div class="text-5xl mb-4 text-white">💻</div>
+                        <h2 class="text-xl font-bold mb-2 text-white">Интерактивное руководство по установке Arch Linux</h2>
+                        <p class="text-gray-200">Пошаговая инструкция для установки и настройки Arch Linux на виртуальной машине с удобным интерфейсом.</p>
+                        <div class="mt-4 inline-block bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-300">
+                            Открыть
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="freebsd.html" class="block">
+                <div class="rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 hover:border-[#ff2a2a]/50">
+                    <div class="p-6">
+                        <div class="text-5xl mb-4 text-white">😈</div>
+                        <h2 class="text-xl font-bold mb-2 text-white">Интерактивное руководство по установке FreeBSD</h2>
+                        <p class="text-gray-200">Пошаговая инструкция для установки и настройки FreeBSD на виртуальной машине с удобным интерфейсом.</p>
+                        <div class="mt-4 inline-block bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-300">
+                            Открыть
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <div class="rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] overflow-hidden bg-white/10 backdrop-blur-md border border-white/20">
+                <div class="p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="text-5xl mb-4 text-gray-200">🚧</div>
+                        <h2 class="text-xl font-bold text-gray-200 mb-2">Проект 3</h2>
+                        <p class="text-gray-200">...</p>
+                    </div>
+                    <div class="mt-4 inline-block bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-full">
+                        В разработке
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </body>
 </html>
