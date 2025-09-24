@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивное руководство по установке Kali Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            color: #2c3e50;
+        }
+        .code-block {
+            position: relative;
+            background-color: #2d3748;
+            color: #ecf0f1;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #34495e;
+            color: #ecf0f1;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #5d6d7e;
+        }
+        .nav-link.active {
+            background-color: #e2e8f0;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .partition-bar {
+            display: flex;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #bdc3c7;
+            width: 100%;
+            background-color: #ecf0f1;
+        }
+        .partition {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .partition.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+        @media (max-width: 768px) {
+            .partition-visualizer-mobile {
+                display: none;
+            }
+            .nav-link {
+                text-align: left;
+            }
+            .code-block pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+        @media (min-width: 768px) {
+            .partition-visualizer-mobile {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-8 p-4 md:p-8">
+        
+        <aside class="w-full md:w-1/4 lg:w-1/5">
+            <nav id="sidebar" class="md:sticky top-8 bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">Этапы установки</h3>
+                <ul class="space-y-2">
+                    <li><a href="#step-1" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">1. Загрузка и начало</a></li>
+                    <li><a href="#step-2" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">2. Разметка диска</a></li>
+                    <li><a href="#step-3" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">3. Настройка пользователя</a></li>
+                    <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">4. Выбор ПО</a></li>
+                    <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">5. Завершение</a></li>
+                    <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">6. Знакомство с nmap</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="w-full md:w-3/4 lg:w-4/5">
+            <header class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Руководство по установке Kali Linux</h1>
+                <p class="text-lg text-gray-600">Пошаговая инструкция для установки и настройки Kali Linux на виртуальной машине VMware.</p>
+            </header>
+
+            <div id="content" class="space-y-8">
+                
+                <section id="step-1" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Загрузка и начало установки</h2>
+                    <p class="mb-4 text-gray-700">После создания виртуальной машины в VMware и её запуска, вы увидите загрузочное меню. Выберите **"Graphical install"** для начала установки с удобным графическим интерфейсом.  Далее следуйте инструкциям на экране.</p>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Последовательность действий:</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>**Select a language**: Выберите `Русский` или `English`.</li>
+                            <li>**Select your location**: Выберите вашу страну.</li>
+                            <li>**Configure the keyboard**: Выберите раскладку клавиатуры.</li>
+                            <li>**Configure the network**: Укажите имя хоста (например, `kali-lab`).</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="step-2" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">2. Разметка диска</h2>
+                    <p class="mb-4 text-gray-700">Инсталлятор Kali Linux предлагает несколько вариантов разметки. Для лабораторной работы проще всего использовать автоматический режим. Kali займет весь виртуальный диск и создаст два раздела: корневой (`/`) и Swap.</p>
+                     <div class="mb-6 partition-visualizer-mobile">
+                        <h4 class="font-semibold mb-2 text-center text-gray-700">Интерактивная схема разделов</h4>
+                        <div id="partition-visualizer" class="partition-bar shadow-inner">
+                            <div id="part-swap" class="partition" style="width: 15%; background-color: #556270;">Swap</div>
+                            <div id="part-root" class="partition" style="width: 85%; background-color: #4ecdc4;">/ (Root)</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mt-4 mb-2">Последовательность действий в инсталляторе:</p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>На экране **"Partition disks"** выберите **"Guided - use entire disk"**.</li>
+                            <li>Выберите виртуальный диск для установки.</li>
+                            <li>Выберите **"All files in one partition (recommended for new users)"**.</li>
+                            <li>Подтвердите разметку, выбрав **"Finish partitioning and write changes to disk"**.</li>
+                            <li>На вопрос **"Write the changes to disks?"** ответьте **"Yes"**.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="step-3" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">3. Настройка пользователя</h2>
+                    <p class="mb-4 text-gray-700">В Kali Linux по умолчанию используется пользователь с ограниченными правами. На этом этапе вы создадите своего пользователя и зададите для него пароль.</p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                        <h4 class="font-semibold mb-2">Процесс создания пользователя:</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>**Full name for the new user**: Введите ваше полное имя.</li>
+                            <li>**Username for your account**: Придумайте имя пользователя (например, `kali-user`).</li>
+                            <li>**Choose a password**: Задайте надёжный пароль.</li>
+                            <li>**Re-enter password to verify**: Подтвердите пароль.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="step-4" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">4. Выбор программного обеспечения</h2>
+                    <p class="mb-4 text-gray-700">На этом этапе вы можете выбрать, какие инструменты и компоненты Kali Linux установить. Для стандартной лабораторной работы достаточно оставить все опции по умолчанию. Это обеспечит наличие базовых инструментов и графической среды.</p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                        <h4 class="font-semibold mb-2">Выбор компонентов:</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Оставьте все опции по умолчанию, включая **"GNOME"** и **"Kali default tools"**.</li>
+                            <li>Нажмите **"Continue"** и дождитесь завершения установки.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="step-5" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">5. Завершение установки</h2>
+                    <p class="mb-4 text-gray-700">Последний этап — установка загрузчика GRUB и перезагрузка. Kali Linux автоматически установит загрузчик на ваш виртуальный диск.</p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                        <h4 class="font-semibold mb-2">Установка GRUB:</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>На вопрос **"Install the GRUB boot loader to the primary drive?"** ответьте **"Yes"**.</li>
+                            <li>Выберите диск для установки загрузчика.</li>
+                            <li>Нажмите **"Continue"**, дождитесь завершения и перезагрузите виртуальную машину.</li>
+                        </ul>
+                    </div>
+                    <div class="mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                        <p class="font-bold">Поздравляю!</p>
+                        <p>Вы успешно установили Kali Linux. Теперь вы можете войти в систему с помощью созданного пользователя и пароля.</p>
+                    </div>
+                </section>
+
+                <section id="step-6" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">6. Бонус: Знакомство с утилитой nmap</h2>
+                    <p class="mb-4 text-gray-700">`nmap` (Network Mapper) — это мощная утилита для исследования сетей. В рамках этой лабораторной работы мы научимся выполнять базовые и продвинутые сканирования.</p>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.1. Подготовка: IP-адрес цели</h3>
+                    <p class="mb-4 text-gray-700">Прежде чем сканировать, нужно знать IP-адрес целевого хоста. Если вы работаете с другой виртуальной машиной в той же сети, используйте команду `ifconfig` в её терминале, чтобы найти IP. В нашем случае для начала мы будем сканировать сам Kali Linux, используя `localhost` или IP-адрес `127.0.0.1`.</p>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.2. Базовое сканирование</h3>
+                    <p class="mb-4 text-gray-700">Самая простая команда для сканирования и её расширенный вариант с подробным выводом.</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash"># Базовое сканирование наиболее популярных портов
+nmap localhost</code></pre>
+                    </div>
+                    <p class="text-gray-700 mb-4">Эта команда выполнит базовое сканирование наиболее популярных портов. Вывод покажет список открытых портов и их состояние.  Чтобы получить более подробный вывод, используйте флаг `-v` (verbose):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">nmap -v localhost</code></pre>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.3. Сканирование служб и определение ОС</h3>
+                    <p class="mb-4 text-gray-700">Nmap может не только определить, открыт ли порт, но и какая служба на нём работает и даже какая операционная система установлена на удалённом хосте. Эти опции требуют прав администратора, поэтому используйте `sudo`.</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                        <li>**Определение версий служб (`-sV`)**: Этот флаг позволяет узнать точную версию службы, работающей на открытом порту.</li>
+                        <div class="code-block">
+                            <button class="copy-btn">Копировать</button>
+                            <pre><code class="language-bash">sudo nmap -sV localhost</code></pre>
+                        </div>
+                        <li>**Определение операционной системы (`-O`)**: Nmap попытается определить операционную систему на основе ответов хоста.</li>
+                        <div class="code-block">
+                            <button class="copy-btn">Копировать</button>
+                            <pre><code class="language-bash">sudo nmap -O localhost</code></pre>
+                        </div>
+                        <li>**Комбинированное сканирование**: Вы можете объединить эти флаги для получения максимально полной информации.</li>
+                        <div class="code-block">
+                            <button class="copy-btn">Копировать</button>
+                            <pre><code class="language-bash">sudo nmap -sV -O localhost</code></pre>
+                        </div>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.4. Сканирование определённых портов</h3>
+                    <p class="mb-4 text-gray-700">Для ускорения процесса или для анализа конкретных служб можно указать порты вручную с помощью флага `-p`.</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                        <li>**Сканирование отдельных портов**:</li>
+                        <div class="code-block">
+                            <button class="copy-btn">Копировать</button>
+                            <pre><code class="language-bash">nmap -p 80,443 localhost</code></pre>
+                        </div>
+                        <li>**Сканирование диапазона портов**:</li>
+                        <div class="code-block">
+                            <button class="copy-btn">Копировать</button>
+                            <pre><code class="language-bash">nmap -p 1-100 localhost</code></pre>
+                        </div>
+                    </ul>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.5. Сохранение результатов</h3>
+                    <p class="mb-4 text-gray-700">Для лабораторной работы важно сохранять результаты сканирования. Nmap позволяет сохранить вывод в нескольких форматах с помощью флага `-oA`.</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash"># Сканирование и сохранение в 3 формата (XML, nmap, grepable)
+sudo nmap -sV -O -oA lab-report localhost</code></pre>
+                    </div>
+
+                    <p class="mt-4 text-gray-700">**Практическое задание:** Попробуйте просканировать другую виртуальную машину в вашей локальной сети, используя IP-адрес вместо `localhost`.</p>
+                    <p class="mt-4 text-gray-700 font-bold">Теперь, когда вы знаете основы, попробуйте поэкспериментировать с различными флагами и их комбинациями, чтобы получить наиболее полную информацию о целевом хосте.</p>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const code = button.previousElementSibling.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        button.textContent = 'Скопировано!';
+                        setTimeout(() => {
+                            button.textContent = 'Копировать';
+                        }, 2000);
+                    });
+                });
+            });
+
+            const sections = document.querySelectorAll('.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-30% 0px -30% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            const partitionHighlights = document.querySelectorAll('#step-2 ul li');
+            if(partitionHighlights) {
+                partitionHighlights.forEach(li => {
+                    const targetId = li.dataset.target;
+                    const targetElement = document.getElementById(targetId);
+
+                    li.addEventListener('mouseover', () => {
+                        if (window.innerWidth > 768) {
+                            targetElement.classList.add('highlight');
+                        }
+                    });
+                    li.addEventListener('mouseout', () => {
+                        if (window.innerWidth > 768) {
+                            targetElement.classList.remove('highlight');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
