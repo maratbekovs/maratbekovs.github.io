@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивное руководство по установке FreeBSD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Ocean Calm (Cool Blues & Grays) -->
+    <!-- Application Structure Plan: A single-page, vertical layout with a sticky sidebar for navigation. This structure is chosen because the source material is a linear, step-by-step process. The sidebar allows for quick review of previous steps, while distinct cards for each step break down the complex process into manageable chunks. Interactions like copy-to-clipboard and a visual partition diagram are added to improve usability and reduce user error. -->
+    <!-- Visualization & Content Choices: Report Info: Disk Partitioning -> Goal: Organize/Inform -> Presentation: Interactive HTML/CSS diagram -> Interaction: Highlighting sections on hover -> Justification: Simplifies the most abstract and error-prone step of the installation, making it easier to visualize the outcome. Report Info: Terminal Commands -> Goal: Inform -> Presentation: Styled <pre><code> blocks -> Interaction: Copy-to-clipboard button -> Justification: Prevents typos and speeds up the process for the user. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            background-color: #f0f4f8;
+            color: #2c3e50;
+        }
+        .code-block {
+            position: relative;
+            background-color: #2d3748;
+            color: #ecf0f1;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #34495e;
+            color: #ecf0f1;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #5d6d7e;
+        }
+        .nav-link.active {
+            background-color: #e2e8f0;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .partition-bar {
+            display: flex;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #bdc3c7;
+            width: 100%;
+            background-color: #ecf0f1;
+        }
+        .partition {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .partition.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        /* Mobile adaptation styles */
+        @media (max-width: 768px) {
+            .partition-visualizer-mobile {
+                display: none;
+            }
+            .nav-link {
+                text-align: center;
+            }
+            .code-block pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+        @media (min-width: 768px) {
+            .partition-visualizer-mobile {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-8 p-4 md:p-8">
+        
+        <aside class="w-full md:w-1/4 lg:w-1/5">
+            <nav id="sidebar" class="md:sticky top-8 bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">Этапы установки</h3>
+                <ul class="space-y-2">
+                    <li><a href="#step-1" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">1. Загрузка</a></li>
+                    <li><a href="#step-2" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">2. Разметка диска</a></li>
+                    <li><a href="#step-3" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">3. Установка</a></li>
+                    <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">4. Базовая настройка</a></li>
+                    <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">5. Сеть и пакеты</a></li>
+                    <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">6. Графическая среда</a></li>
+                    <li><a href="#step-7" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">7. Финал</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="w-full md:w-3/4 lg:w-4/5">
+            <header class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Руководство по установке FreeBSD</h1>
+                <p class="text-lg text-gray-600">Пошаговая инструкция для установки и настройки системы FreeBSD на виртуальной машине (UEFI).</p>
+            </header>
+
+            <div id="content" class="space-y-8">
+                
+                <section id="step-1" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Загрузка и начало установки</h2>
+                    <p class="mb-4 text-gray-700">После загрузки с установочного носителя вы увидите начальный экран. Используйте клавиши со стрелками, чтобы выбрать **"Install"**, затем нажмите **Enter** для запуска инсталлятора `bsdinstall`. Далее выберите язык, раскладку клавиатуры и имя хоста для вашей системы, следуя инструкциям на экране.</p>
+                </section>
+
+                <section id="step-2" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">2. Разметка диска</h2>
+                    <p class="mb-4 text-gray-700">Этот этап требует особого внимания. FreeBSD использует утилиту `gpart` для работы с GPT-таблицей. Мы создадим три раздела для UEFI-системы. В инсталляторе, на экране **"Partitioning"**, выберите **"Manual"**, затем нажмите **OK**.</p>
+                    <div class="mb-6 partition-visualizer-mobile">
+                        <h4 class="font-semibold mb-2 text-center text-gray-700">Интерактивная схема разделов</h4>
+                        <div id="partition-visualizer" class="partition-bar shadow-inner">
+                            <div id="part-boot" class="partition" style="width: 1%; background-color: #2980b9;">/boot</div>
+                            <div id="part-swap" class="partition" style="width: 15%; background-color: #e74c3c;">Swap</div>
+                            <div id="part-root" class="partition" style="width: 84%; background-color: #27ae60;">/ (Root)</div>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 mb-6 text-gray-700">
+                        <li data-target="part-boot"><strong>Раздел `/boot`</strong> (512K): Загрузочный раздел. Тип: `freebsd-boot`.</li>
+                        <li data-target="part-swap"><strong>Раздел `swap`</strong> (2 ГБ): Файл подкачки. Тип: `freebsd-swap`.</li>
+                        <li data-target="part-root"><strong>Корневой раздел `/`</strong> (остальное место): Основной раздел для системы и данных. Тип: `freebsd-ufs`.</li>
+                    </ul>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                        <h4 class="font-semibold mb-2">Последовательность действий в инсталляторе:</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                             <li>Выберите диск и нажмите **Create**.</li>
+                             <li>Нажмите **Add**.</li>
+                             <li>Для раздела `/boot` введите **Size** `512K`, выберите **Type** `freebsd-boot` и нажмите **OK**.</li>
+                             <li>Нажмите **Add**.</li>
+                             <li>Для раздела `swap` введите **Size** `2G` (для 1-2 ГБ ОЗУ), выберите **Type** `freebsd-swap` и нажмите **OK**.</li>
+                             <li>Нажмите **Add**.</li>
+                             <li>Для корневого раздела `/` оставьте пустое поле **Size**, выберите **Type** `freebsd-ufs` и нажмите **OK**.</li>
+                             <li>Выберите **`freebsd-ufs`** раздел и нажмите **Set**. Введите `/` в поле **Mountpoint** и нажмите **OK**.</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 text-sm mt-4 mb-2">Команда для проверки дисков в терминале (после выхода из инсталлятора):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">gpart show</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-3" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">3. Установка</h2>
+                    <p class="mb-4 text-gray-700">После разметки инсталлятор предложит установить саму систему. Выберите **"Commit"** и нажмите **Enter**. Затем выберите, какие дистрибутивы системы установить: `doc`, `src`, `ports` и `lib32`. Используйте клавишу **Tab** для навигации и **пробел** для выбора, затем нажмите **OK**.</p>
+                </section>
+
+                <section id="step-4" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">4. Базовая настройка</h2>
+                    <p class="mb-4 text-gray-700">После установки системы необходимо выполнить базовую настройку: задать пароль root, создать пользователя и настроить часовой пояс. Инсталлятор проведет вас по этим шагам автоматически.</p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                        <h4 class="font-semibold mb-2">Процесс создания пользователя `adduser`:</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><code class="font-mono">Username:</code> <code class="font-bold">ваше_имя</code></li>
+                            <li><code class="font-mono">Full name:</code> <code class="font-bold">Ваше Имя</code></li>
+                            <li><code class="font-mono">Uid:</code> <code class="font-bold">Enter</code></li>
+                            <li><code class="font-mono">Login group:</code> <code class="font-bold">Enter</code></li>
+                            <li><code class="font-mono">Invite into other groups:</code> <code class="font-bold">wheel</code></li>
+                            <li><code class="font-mono">Login class:</code> <code class="font-bold">Enter</code></li>
+                            <li><code class="font-mono">Shell:</code> <code class="font-bold">Enter</code></li>
+                            <li><code class="font-mono">Home directory:</code> <code class="font-bold">Enter</code></li>
+                            <li><code class="font-mono">Home directory permissions:</code> <code class="font-bold">Enter</code></li>
+                            <li><code class="font-mono">Use password-based authentication:</code> <code class="font-bold">yes</code></li>
+                            <li><code class="font-mono">Use an empty password:</code> <code class="font-bold">no</code></li>
+                            <li><code class="font-mono">Use a random password:</code> <code class="font-bold">no</code></li>
+                            <li><code class="font-mono">Enter password:</code> <code class="font-bold">ваш_пароль</code></li>
+                            <li><code class="font-mono">Enter password again:</code> <code class="font-bold">ваш_пароль</code></li>
+                            <li><code class="font-mono">Lock out after creation:</code> <code class="font-bold">no</code></li>
+                            <li><code class="font-mono">OK?</code> <code class="font-bold">yes</code></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="step-5" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">5. Сеть и пакеты</h2>
+                    <p class="mb-4 text-gray-700">После перезагрузки и входа в систему нужно настроить интернет и установить менеджер пакетов `pkg` для удобной установки приложений.</p>
+                    <p class="text-gray-600 text-sm mb-2">Проверка сетевого интерфейса:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">ifconfig</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка DHCP для получения IP-адреса (замените `&lt;имя_интерфейса&gt;`):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">dhclient &lt;имя_интерфейса&gt;</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Установка `pkg`:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">pkg</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Обновление репозиториев:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">pkg update</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-6" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">6. Установка графической среды</h2>
+                    <p class="mb-4 text-gray-700">Установим графический сервер Xorg и легкую графическую среду, например XFCE. Также установим утилиты для работы с мышью и клавиатурой.</p>
+                    <p class="text-gray-600 text-sm mb-2">Установка Xorg и XFCE:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo pkg install xorg xfce4 xfce4-goodies</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Включение службы `dbus` (необходима для XFCE):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">sudo sysrc dbus_enable="YES"</code></pre>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Настройка автозапуска XFCE (добавьте в конец файла `~/.xinitrc`):</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">echo "exec xfce4-session" > ~/.xinitrc</code></pre>
+                    </div>
+                </section>
+
+                <section id="step-7" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">7. Финальный запуск</h2>
+                    <p class="mb-4 text-gray-700">Перезагрузите компьютер и войдите под своей учетной записью. Для запуска графической среды введите команду `startx`. Если вы хотите, чтобы она запускалась автоматически, отредактируйте файл `~/.login`.</p>
+                    <p class="text-gray-600 text-sm mb-2">Запуск графической среды вручную:</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">startx</code></pre>
+                    </div>
+                    <div class="mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                        <p class="font-bold">Поздравляю!</p>
+                        <p>Вы успешно установили и настроили FreeBSD. Теперь у вас есть минималистичная, быстрая и полностью контролируемая система.</p>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const code = button.previousElementSibling.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        button.textContent = 'Скопировано!';
+                        setTimeout(() => {
+                            button.textContent = 'Копировать';
+                        }, 2000);
+                    });
+                });
+            });
+
+            const sections = document.querySelectorAll('.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            const partitionHighlights = document.querySelectorAll('#step-2 ul li');
+            partitionHighlights.forEach(li => {
+                const targetId = li.dataset.target;
+                const targetElement = document.getElementById(targetId);
+
+                li.addEventListener('mouseover', () => {
+                    if (window.innerWidth > 768) {
+                        targetElement.classList.add('highlight');
+                    }
+                });
+                li.addEventListener('mouseout', () => {
+                    if (window.innerWidth > 768) {
+                        targetElement.classList.remove('highlight');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
