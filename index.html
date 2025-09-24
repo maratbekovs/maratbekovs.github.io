@@ -1,491 +1,64 @@
 <!DOCTYPE html>
-<html lang="ru" class="scroll-smooth">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактивное руководство по установке Arch Linux</title>
+    <title>labs by maratbekov</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chosen Palette: Calm Harmony (Warm Neutrals) -->
-    <!-- Application Structure Plan: A single-page, vertical layout with a sticky sidebar for navigation. This structure is chosen because the source material is a linear, step-by-step process. The sidebar allows for quick review of previous steps, while distinct cards for each step break down the complex process into manageable chunks. Interactions like copy-to-clipboard and a visual partition diagram are added to improve usability and reduce user error. -->
-    <!-- Visualization & Content Choices: Report Info: Disk Partitioning -> Goal: Organize/Inform -> Viz/Presentation: Interactive HTML/CSS diagram -> Interaction: Highlighting sections on scroll/click -> Justification: Simplifies the most abstract and error-prone step of the installation, making it easier to visualize the outcome. Report Info: Terminal Commands -> Goal: Inform -> Presentation: Styled <pre><code> blocks -> Interaction: Copy-to-clipboard button -> Justification: Prevents typos and speeds up the process for the user. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            background-color: #f8f9fa;
-            color: #212529;
+            background-color: #f3f4f6;
         }
-        .code-block {
-            position: relative;
-            background-color: #2d3748;
-            color: #e2e8f0;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            overflow-x: auto;
+        .card-enter-from {
+            transform: translateY(20px);
+            opacity: 0;
         }
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: #4a5568;
-            color: #e2e8f0;
-            border: none;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            transition: background-color 0.2s;
-        }
-        .copy-btn:hover {
-            background-color: #718096;
-        }
-        .nav-link.active {
-            background-color: #e2e8f0;
-            color: #1a202c;
-            font-weight: 600;
-        }
-        .partition-bar {
-            display: flex;
-            height: 50px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid #cbd5e0;
-            width: 100%;
-            background-color: #e2e8f0;
-        }
-        .partition {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .partition.highlight {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0,0,0,0.4);
-            z-index: 10;
+        .card-enter-to {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
-<body class="font-sans">
-
-    <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-8 p-4 md:p-8">
-        
-        <aside class="w-full md:w-1/4 lg:w-1/5">
-            <nav id="sidebar" class="sticky top-8 bg-white p-4 rounded-lg shadow-md">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Этапы установки</h3>
-                <ul class="space-y-2">
-                    <li><a href="#step-1" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">1. Подготовка</a></li>
-                    <li><a href="#step-2" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">2. Интернет</a></li>
-                    <li><a href="#step-3" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">3. Разметка диска</a></li>
-                    <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">4. Форматирование</a></li>
-                    <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">5. Установка системы</a></li>
-                    <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">6. Chroot и настройка</a></li>
-                    <li><a href="#step-7" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">7. Загрузчик GRUB</a></li>
-                    <li><a href="#step-8" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">8. Финальная настройка</a></li>
-                    <li><a href="#step-9" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">9. Графическая оболочка</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <main class="w-full md:w-3/4 lg:w-4/5">
-            <header class="bg-white p-8 rounded-lg shadow-lg mb-8">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Руководство по установке Arch Linux</h1>
-                <p class="text-lg text-gray-600">Интерактивное пошаговое руководство для успешной установки и настройки системы с графическим интерфейсом на виртуальной машине (UEFI).</p>
-            </header>
-
-            <div id="content" class="space-y-8">
-                
-                <section id="step-1" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Подготовка</h2>
-                    <p class="mb-4 text-gray-700">Перед началом убедитесь, что вы скачали образ Arch Linux с <a href="https://www.archlinux.org/download/" target="_blank" class="text-blue-600 hover:underline">официального сайта</a> и подготовили загрузочный носитель. Также ознакомьтесь с базовыми командами редактора Vim.</p>
-                    <div class="bg-gray-100 p-4 rounded-md">
-                        <h4 class="font-semibold mb-2">Команды для Vim:</h4>
-                        <ul class="list-disc list-inside text-gray-700 grid grid-cols-2 gap-x-4">
-                            <li><code class="font-mono">i</code> - Режим ввода</li>
-                            <li><code class="font-mono">Esc</code> - Обычный режим</li>
-                            <li><code class="font-mono">:w</code> - Сохранить</li>
-                            <li><code class="font-mono">:q</code> - Выйти</li>
-                            <li><code class="font-mono">:wq</code> - Сохранить и выйти</li>
-                            <li><code class="font-mono">:q!</code> - Выйти без сохранения</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section id="step-2" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">2. Настройка интернета</h2>
-                    <p class="mb-4 text-gray-700">После загрузки с установочного носителя необходимо подключиться к интернету. Проводное подключение должно определиться автоматически. Для Wi-Fi используйте утилиту `iwctl`.</p>
-                    <p class="text-gray-600 text-sm mb-2">Команда для проверки соединения:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">ping -c 3 archlinux.org</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Команды для Wi-Fi (выполняйте их по порядку):</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">iwctl</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm my-2">Найти имя вашего устройства (например, `wlan0`):</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">device list</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm my-2">Включить устройство (замените `&lt;имя_устройства&gt;`):</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">device &lt;имя_устройства&gt; set-property Powered on</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm my-2">Просканировать сети:</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">station &lt;имя_устройства&gt; scan</code></pre>
-                    </div>
-                     <p class="text-gray-600 text-sm my-2">Посмотреть список сетей:</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">station &lt;имя_устройства&gt; get-networks</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm my-2">Подключиться к сети (замените `&lt;SSID&gt;`):</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">station &lt;имя_устройства&gt; connect &lt;SSID&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm my-2">Выйти из утилиты:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">exit</code></pre>
-                    </div>
-                </section>
-
-                <section id="step-3" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">3. Разметка диска</h2>
-                    <p class="mb-4 text-gray-700">Это самый ответственный этап. Мы создадим GPT-таблицу и четыре раздела для UEFI-системы. Внимательно проверьте имя диска (например, `/dev/sda`).</p>
-                     <div class="mb-6">
-                        <h4 class="font-semibold mb-2 text-center text-gray-700">Интерактивная схема разделов</h4>
-                        <div id="partition-visualizer" class="partition-bar shadow-inner">
-                            <div id="part-efi" class="partition" style="width: 10%; background-color: #6366f1;">EFI</div>
-                            <div id="part-swap" class="partition" style="width: 15%; background-color: #ec4899;">Swap</div>
-                            <div id="part-root" class="partition" style="width: 30%; background-color: #22c55e;">/ (Root)</div>
-                            <div id="part-home" class="partition" style="width: 45%; background-color: #f97316;">/home</div>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center my-12 bg-gradient-to-r from-gray-50 to-gray-200 rounded-xl p-8 shadow-inner">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">labs by maratbekov</h1>
+            <p class="mt-2 text-lg md:text-xl text-gray-600">Сборник интерактивных проектов</p>
+        </header>
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <a href="arch-linux-installer-spa.html" class="block">
+                <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:scale-105 overflow-hidden">
+                    <div class="p-6">
+                        <div class="text-5xl mb-4">💻</div>
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Интерактивное руководство по установке Arch Linux</h2>
+                        <p class="text-gray-600">Пошаговая инструкция для установки и настройки Arch Linux на виртуальной машине с удобным интерфейсом.</p>
+                        <div class="mt-4 inline-block bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-300">
+                            Открыть
                         </div>
                     </div>
-                    <ul class="space-y-2 mb-6 text-gray-700">
-                        <li data-target="part-efi"><strong>EFI-раздел</strong> (550 МБ): Системный раздел для загрузчика UEFI.</li>
-                        <li data-target="part-swap"><strong>Swap-раздел</strong> (ОЗУ + 1-2 ГБ): Файл подкачки, используется при нехватке оперативной памяти.</li>
-                        <li data-target="part-root"><strong>Корневой раздел (`/`)</strong> (от 40 ГБ): Здесь будет установлена сама система.</li>
-                        <li data-target="part-home"><strong>Домашний раздел (`/home`)</strong> (остальное место): Для ваших личных файлов.</li>
-                    </ul>
-                    <p class="text-gray-600 text-sm mb-2">Просмотр списка дисков:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">fdisk -l</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Запуск утилиты `fdisk` (замените `&lt;диск&gt;` на ваше имя диска):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">fdisk /dev/&lt;диск&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Команды внутри утилиты `fdisk` (нажимайте `Enter` после каждой команды):</p>
-                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
-                         <ul class="list-disc list-inside space-y-2">
-                             <li>Создать GPT таблицу: <code class="font-mono">g</code></li>
-                             <li>Создать EFI раздел: <code class="font-mono">n</code>, затем <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">+550M</code>, <code class="font-mono">Enter</code>. Установить тип: <code class="font-mono">t</code>, <code class="font-mono">1</code>, <code class="font-mono">Enter</code>.</li>
-                             <li>Создать Swap раздел: <code class="font-mono">n</code>, затем <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">+2G</code> (например), <code class="font-mono">Enter</code>. Установить тип: <code class="font-mono">t</code>, <code class="font-mono">19</code>, <code class="font-mono">Enter</code>.</li>
-                             <li>Создать корневой раздел: <code class="font-mono">n</code>, затем <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">+40G</code>, <code class="font-mono">Enter</code>.</li>
-                             <li>Создать домашний раздел (на оставшемся месте): <code class="font-mono">n</code>, <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>, <code class="font-mono">Enter</code>.</li>
-                             <li>Просмотреть результат: <code class="font-mono">p</code>, <code class="font-mono">Enter</code>.</li>
-                             <li>Записать изменения и выйти: <code class="font-mono">w</code>, <code class="font-mono">Enter</code>.</li>
-                         </ul>
-                    </div>
-                </section>
-
-                <section id="step-4" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">4. Форматирование и монтирование</h2>
-                    <p class="mb-4 text-gray-700">Теперь нужно отформатировать созданные разделы в нужные файловые системы и смонтировать их. Используйте `fdisk -l` чтобы увидеть имена ваших разделов (например, `/dev/sda1`, `/dev/sda2`).</p>
-                    <p class="text-gray-600 text-sm mb-2">Форматирование EFI-раздела:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mkfs.fat -F32 /dev/&lt;раздел_efi&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Форматирование Swap-раздела и его активация:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mkswap /dev/&lt;раздел_swap&gt;</code></pre>
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">swapon /dev/&lt;раздел_swap&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Форматирование корневого (`/`) и домашнего (`/home`) разделов:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mkfs.ext4 /dev/&lt;раздел_root&gt;</code></pre>
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mkfs.ext4 /dev/&lt;раздел_home&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Монтирование разделов:</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mount /dev/&lt;раздел_root&gt; /mnt</code></pre>
-                    </div>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mkdir -p /mnt/home</code></pre>
-                    </div>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mount /dev/&lt;раздел_home&gt; /mnt/home</code></pre>
-                    </div>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mkdir -p /mnt/boot/efi</code></pre>
-                    </div>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">mount /dev/&lt;раздел_efi&gt; /mnt/boot/efi</code></pre>
-                    </div>
-                </section>
-
-                <section id="step-5" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">5. Установка системы</h2>
-                    <p class="mb-4 text-gray-700">Устанавливаем базовую систему, ядро и драйверы. Затем генерируем файл `fstab`, который сообщает системе, какие разделы монтировать при загрузке.</p>
-                    <p class="text-gray-600 text-sm mb-2">Установка базовых пакетов (может занять время):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">pacstrap /mnt base linux linux-firmware</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Генерация fstab:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">genfstab -U /mnt >> /mnt/etc/fstab</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Проверка fstab (опционально):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">cat /mnt/etc/fstab</code></pre>
-                    </div>
-                </section>
-
-                <section id="step-6" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">6. Chroot и базовая настройка</h2>
-                    <p class="mb-4 text-gray-700">Переходим в установленную систему (`chroot`), чтобы выполнить её первоначальную настройку: время, язык, имя компьютера и создание пользователя.</p>
-                    <p class="text-gray-600 text-sm mb-2">Вход в новую систему:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">arch-chroot /mnt</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Настройка времени (замените на свой регион/город):</p>
-                    <div class="code-block mb-2">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime</code></pre>
-                    </div>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">hwclock --systohc</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Настройка локализации (откройте файл и раскомментируйте `en_US.UTF-8` и `ru_RU.UTF-8`):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">vim /etc/locale.gen</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Генерация локалей:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">locale-gen</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Установка языка системы:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">echo "LANG=ru_RU.UTF-8" > /etc/locale.conf</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Настройка имени компьютера:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">vim /etc/hostname</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Настройка хостов (откройте файл и добавьте строки, заменив `&lt;имя_компьютера&gt;`):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">vim /etc/hosts</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Пароль для root:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">passwd</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Создание пользователя (замените `&lt;имя_пользователя&gt;`):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">useradd -m -G wheel,audio,video,storage,network,power &lt;имя_пользователя&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Установка пароля для нового пользователя:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">passwd &lt;имя_пользователя&gt;</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Установка `sudo`:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">pacman -S sudo</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Настройка `sudoers` (в открывшемся файле раскомментируйте `%wheel ALL=(ALL) ALL`):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">EDITOR=vim visudo</code></pre>
-                    </div>
-                </section>
-                
-                <section id="step-7" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">7. Установка загрузчика GRUB</h2>
-                    <p class="mb-4 text-gray-700">GRUB — это программа, которая будет загружать вашу новую операционную систему. Установим и настроим его для UEFI.</p>
-                    <p class="text-gray-600 text-sm mb-2">Установка пакетов:</p>
-                     <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">pacman -S grub efibootmgr</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Установка GRUB в EFI раздел:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Создание конфигурационного файла:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">grub-mkconfig -o /boot/grub/grub.cfg</code></pre>
-                    </div>
-                </section>
-
-                <section id="step-8" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">8. Финальная настройка и первый запуск</h2>
-                    <p class="mb-4 text-gray-700">Устанавливаем утилиты для работы сети, выходим из chroot и перезагружаемся в установленную систему. После перезагрузки нужно будет снова подключиться к интернету и обновить пакеты.</p>
-                    <p class="text-gray-600 text-sm mb-2">Установка сетевых утилит:</p>
-                     <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">pacman -S dhcpcd iwd</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Выход из chroot:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">exit</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Размонтирование разделов:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">umount -R /mnt</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Перезагрузка (не забудьте вытащить флешку):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">reboot</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mt-6 mb-2">--- После перезагрузки и входа под своим пользователем ---</p>
-                    <p class="text-gray-600 text-sm mb-2">Включите автозапуск сетевых служб (выполнять после подключения к интернету):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">sudo systemctl enable dhcpcd.service</code></pre>
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">sudo systemctl enable iwd.service</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Откройте файл `/etc/pacman.conf` и раскомментируйте секцию `[multilib]`:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">sudo vim /etc/pacman.conf</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Обновите систему:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">sudo pacman -Syu</code></pre>
-                    </div>
-                </section>
-
-                <section id="step-9" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">9. Установка графической оболочки (i3)</h2>
-                    <p class="mb-4 text-gray-700">Почти готово! Устанавливаем графический сервер Xorg, оконный менеджер i3, эмулятор терминала и шрифты. Затем настраиваем автозапуск.</p>
-                    <p class="text-gray-600 text-sm mb-2">Установка Xorg и i3-gaps (улучшенная версия i3):</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">sudo pacman -S xorg xorg-xinit xorg-server i3-gaps</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Установка терминала и шрифтов:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">sudo pacman -S alacritty ttf-jetbrains-mono</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Настройка автозапуска i3 при старте X-сервера:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">echo "exec i3" > ~/.xinitrc</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Добавление автозапуска графической оболочки при входе в систему:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash"># Добавьте эту строку в конец файла ~/.bash_profile или ~/.zprofile:
-if [[ -z "$DISPLAY" && "$XDG_VTNR" -eq 1 ]]; then exec startx; fi</code></pre>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-2">Запуск графической оболочки вручную:</p>
-                    <div class="code-block mb-4">
-                        <button class="copy-btn">Копировать</button>
-                        <pre><code class="language-bash">startx</code></pre>
-                    </div>
-                    <div class="mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
-                        <p class="font-bold">Поздравляю!</p>
-                        <p>Вы успешно установили и настроили Arch Linux. Теперь у вас есть минималистичная, быстрая и полностью контролируемая система.</p>
-                    </div>
-                </section>
-
+                </div>
+            </a>
+            <div class="bg-gray-200 rounded-xl shadow-md p-6 flex flex-col justify-between">
+                <div>
+                    <div class="text-5xl mb-4 text-gray-400">🚧</div>
+                    <h2 class="text-xl font-bold text-gray-400 mb-2">Проект 2</h2>
+                    <p class="text-gray-400">...</p>
+                </div>
+                <div class="mt-4 inline-block bg-gray-400 text-white text-sm font-semibold py-2 px-4 rounded-full">
+                    В разработке
+                </div>
+            </div>
+            <div class="bg-gray-200 rounded-xl shadow-md p-6 flex flex-col justify-between">
+                <div>
+                    <div class="text-5xl mb-4 text-gray-400">🚧</div>
+                    <h2 class="text-xl font-bold text-gray-400 mb-2">Проект 3</h2>
+                    <p class="text-gray-400">...</p>
+                </div>
+                <div class="mt-4 inline-block bg-gray-400 text-white text-sm font-semibold py-2 px-4 rounded-full">
+                    В разработке
+                </div>
             </div>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const copyButtons = document.querySelectorAll('.copy-btn');
-            copyButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const code = button.nextElementSibling.querySelector('code').innerText;
-                    navigator.clipboard.writeText(code).then(() => {
-                        button.textContent = 'Скопировано!';
-                        setTimeout(() => {
-                            button.textContent = 'Копировать';
-                        }, 2000);
-                    });
-                });
-            });
-
-            const sections = document.querySelectorAll('.step');
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        navLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href').substring(1) === entry.target.id) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-            }, { rootMargin: '-50% 0px -50% 0px' });
-
-            sections.forEach(section => {
-                observer.observe(section);
-            });
-
-            const partitionHighlights = document.querySelectorAll('#step-3 ul li');
-            partitionHighlights.forEach(li => {
-                const targetId = li.dataset.target;
-                const targetElement = document.getElementById(targetId);
-
-                li.addEventListener('mouseover', () => {
-                    targetElement.classList.add('highlight');
-                });
-                li.addEventListener('mouseout', () => {
-                    targetElement.classList.remove('highlight');
-                });
-            });
-        });
-    </script>
 </body>
 </html>
