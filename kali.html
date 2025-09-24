@@ -97,6 +97,7 @@
                     <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">4. Выбор ПО</a></li>
                     <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">5. Завершение</a></li>
                     <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">6. Знакомство с nmap</a></li>
+                    <li><a href="#step-7" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">7. Доступ к Dark Web через Tor</a></li>
                 </ul>
             </nav>
         </aside>
@@ -253,6 +254,114 @@ sudo nmap -sV -O -oA lab-report localhost</code></pre>
 
                     <p class="mt-4 text-gray-700">**Практическое задание:** Попробуйте просканировать другую виртуальную машину в вашей локальной сети, используя IP-адрес вместо `localhost`.</p>
                     <p class="mt-4 text-gray-700 font-bold">Теперь, когда вы знаете основы, попробуйте поэкспериментировать с различными флагами и их комбинациями, чтобы получить наиболее полную информацию о целевом хосте.</p>
+                </section>
+
+                <section id="step-7" class="step bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">7. Бонус: Доступ к Dark Web через Tor Browser</h2>
+                    <p class="mb-4 text-gray-700">
+                        Добро пожаловать в темный интернет, или, как его еще называют, Dark Web. Это часть интернета, 
+                        которая недоступна через обычные поисковые системы и требует специального программного обеспечения для доступа. 
+                        В Kali Linux, одной из популярных операционных систем для тестирования на проникновение, 
+                        доступ к Dark Web можно получить через Tor Browser.
+                    </p>
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-4">
+                        <p class="font-bold">Важное предупреждение:</p>
+                        <p>
+                            Темный интернет может содержать незаконный, шокирующий или вводящий в заблуждение контент. 
+                            Пользоваться им нужно с крайней осторожностью и осознанием рисков. 
+                            Незаконная деятельность в любой части интернета, включая Dark Web, может повлечь за собой серьезные последствия. 
+                            Эта инструкция предоставлена исключительно в образовательных целях, чтобы показать, 
+                            как можно использовать Tor Browser в Kali Linux.
+                        </p>
+                    </div>
+                    <p class="mb-4 text-gray-700">
+                        Tor (The Onion Router) — это бесплатная сеть и программное обеспечение, 
+                        которое позволяет анонимно использовать интернет, маскируя ваш IP-адрес. 
+                        Tor Browser — это специальная версия браузера Firefox, настроенная для работы через сеть Tor, 
+                        что делает его основным инструментом для доступа к сайтам, расположенным в .onion доменах 
+                        (специфичные для Tor сайты, составляющие основную часть Dark Web).
+                    </p>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 1: Установка Tor Browser (если не установлен)</h3>
+                    <p class="mb-4 text-gray-700">
+                        Иногда Tor Browser может быть уже установлен в Kali Linux. 
+                        Проверить это можно, открыв терминал (например, `Ctrl + Alt + T`) и введя:
+                    </p>
+                    <div class="code-block mb-4">
+                        <button class="copy-btn">Копировать</button>
+                        <pre><code class="language-bash">tor-browser</code></pre>
+                    </div>
+                    <p class="mb-4 text-gray-700">
+                        Если команда выполнится и откроется Tor Browser, вы можете сразу перейти к следующему шагу.
+                    </p>
+                    <p class="mb-4 text-gray-700">
+                        Если команда не найдена, вам нужно установить Tor Browser. 
+                        В Kali Linux это делается через менеджер пакетов `apt`.
+                    </p>
+                    <div class="bg-gray-100 p-4 rounded-md text-gray-700 mb-4">
+                        <h4 class="font-semibold mb-2">Процесс установки:</h4>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li><strong>Обновите список пакетов:</strong></li>
+                            <div class="code-block mt-2">
+                                <button class="copy-btn">Копировать</button>
+                                <pre><code class="language-bash">sudo apt update</code></pre>
+                            </div>
+                            <li><strong>Установите пакет `torbrowser-launcher`:</strong></li>
+                            <div class="code-block mt-2">
+                                <button class="copy-btn">Копировать</button>
+                                <pre><code class="language-bash">sudo apt install torbrowser-launcher</code></pre>
+                            </div>
+                        </ol>
+                        <p class="mt-2">
+                            `torbrowser-launcher` — это удобный установщик, который загрузит и настроит официальный Tor Browser для вас.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 2: Запуск Tor Browser</h3>
+                    <p class="mb-4 text-gray-700">
+                        После установки вы можете запустить Tor Browser следующими способами:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                        <li><strong>Через терминал:</strong> Введите команду `tor-browser` и нажмите Enter.</li>
+                        <div class="code-block mt-2">
+                            <button class="copy-btn">Копировать</button>
+                            <pre><code class="language-bash">tor-browser</code></pre>
+                        </div>
+                        <li><strong>Через графический интерфейс:</strong> Откройте меню приложений Kali Linux. Перейдите в раздел "Privacy" (Конфиденциальность). Найдите и кликните по ярлыку "Tor Browser".</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 3: Подключение к сети Tor</h3>
+                    <p class="mb-4 text-gray-700">
+                        При первом запуске Tor Browser откроется специальный мастер подключения.
+                    </p>
+                    <ol class="list-decimal list-inside text-gray-700 space-y-2 mb-4">
+                        <li>Выберите предпочитаемый язык (например, `English` или `Русский`).</li>
+                        <li>Нажмите `Connect`.</li>
+                        <li>Tor Browser начнет подключаться к сети Tor. Это может занять несколько минут. Вы увидите прогресс и сообщения о подключении к узлам сети.</li>
+                        <li>Когда подключение будет установлено, откроется окно браузера Firefox с установленными настройками безопасности и анонимности Tor.</li>
+                    </ol>
+
+                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 4: Навигация по Dark Web</h3>
+                    <p class="mb-4 text-gray-700">
+                        Теперь вы подключены к сети Tor. Вы можете:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                        <li>Посетить сайт проекта Tor: <code class="bg-gray-200 px-1 rounded">https://www.torproject.org/</code> для получения дополнительной информации.</li>
+                        <li>Посетить каталоги .onion сайтов: Существуют специальные сайты-каталоги, которые перечисляют другие .onion адреса. Примером может быть <code class="bg-gray-200 px-1 rounded">http://torlinks.co/</code> или другие, которые можно найти (помните о рисках).</li>
+                        <li>Использовать специальные поисковые системы: Некоторые поисковые системы, работающие через Tor, например <code class="bg-gray-200 px-1 rounded">http://search.onion/</code>, позволяют искать .onion сайты.</li>
+                    </ul>
+                    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md">
+                        <p class="font-bold">Помните:</p>
+                        <ul class="list-disc list-inside">
+                            <li>Скорость соединения через Tor обычно низкая.</li>
+                            <li>Никогда не открывайте файлы, скачанные с .onion сайтов, без надлежащей проверки.</li>
+                            <li>Не вводите личную информацию на подозрительных сайтах.</li>
+                            <li>Используйте только официальный Tor Browser, загруженный с <code class="bg-gray-200 px-1 rounded">torproject.org</code>, чтобы избежать поддельных версий.</li>
+                        </ul>
+                    </div>
+                    <p class="mt-4 text-gray-700 font-bold">
+                        Поздравляем! Вы узнали, как получить доступ к Dark Web через Tor Browser в Kali Linux.
+                    </p>
                 </section>
 
             </div>
