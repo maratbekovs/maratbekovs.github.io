@@ -4,16 +4,634 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Интерактивное руководство по установке Kali Linux</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com    "></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
         body {
-            background-color: #f0f4f8;
-            color: #2c3e50;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            animation: fadeInDown 1s ease;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+        .logo-square {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: rotate 10s infinite linear;
+        }
+        .logo-circle {
+            width: 20px;
+            height: 20px;
+            background: var(--text);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            animation: pulse 2s infinite alternate;
+        }
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .logo span {
+            font-weight: 300;
+            color: var(--text-secondary);
+        }
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            padding: 80px 0;
+            min-height: 80vh;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero-title span {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+        .cta-button {
+            background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 42, 42, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(255, 42, 42, 0.4);
+        }
+        .ghost-button {
+            background: transparent;
+            border: 2px solid var(--accent);
+            padding: 13px 38px;
+            border-radius: 30px;
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .ghost-button:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-5px);
+        }
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .floating-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+        .card-content h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .card-content p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .security-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .security-indicator span {
+            font-size: 0.9rem;
+            color: var(--success-green);
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+            padding-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .features {
+            padding: 100px 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .feature {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .feature h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .feature p {
+            color: var(--text-secondary);
+        }
+        .game-section {
+            padding: 100px 0;
+        }
+        .quiz-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .quiz-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .progress-bar {
+            width: 300px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 100%; /* Updated for demo */
+            background: var(--accent);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-body {
+            margin-bottom: 40px;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-container h3 {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .option:hover {
+            background: rgba(255, 42, 42, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .quiz-btn {
+            background: var(--accent);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-btn:hover {
+            background: var(--accent-dark);
+        }
+        .info-section {
+            padding: 100px 0;
+        }
+        .rules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .rule {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+        }
+        .rule-number {
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rule h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rule p {
+            color: var(--text-secondary);
+        }
+        .footer {
+            margin-top: 100px;
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .footer-section p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .access-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .access-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .access-links a:hover {
+            color: var(--accent);
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 30px;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav {
+                display: none;
+            }
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            .quiz-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            .progress-bar {
+                width: 100%;
+            }
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        .nav-link.active {
+            background-color: rgba(255, 42, 42, 0.2);
+            color: var(--accent);
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        .nav-link::after {
+            display: none;
+        }
+        .nav-link.active:hover {
+            background-color: rgba(255, 42, 42, 0.3);
         }
         .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+        }
+        .code-block pre {
+            color: var(--text);
+        }
+        /* Custom styles for the new page */
+        .code-block {
             position: relative;
-            background-color: #2d3748;
-            color: #ecf0f1;
             border-radius: 0.5rem;
             padding: 1rem;
             overflow-x: auto;
@@ -22,31 +640,27 @@
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
-            background-color: #34495e;
-            color: #ecf0f1;
-            border: none;
+            background-color: rgba(255, 42, 42, 0.3);
+            color: var(--text);
+            border: 1px solid var(--accent);
             padding: 0.25rem 0.75rem;
             border-radius: 0.375rem;
             cursor: pointer;
             font-size: 0.875rem;
             transition: background-color 0.2s;
+            font-family: 'JetBrains Mono', monospace;
         }
         .copy-btn:hover {
-            background-color: #5d6d7e;
-        }
-        .nav-link.active {
-            background-color: #e2e8f0;
-            color: #2c3e50;
-            font-weight: 600;
+            background-color: var(--accent);
         }
         .partition-bar {
             display: flex;
             height: 50px;
             border-radius: 8px;
             overflow: hidden;
-            border: 2px solid #bdc3c7;
+            border: 2px solid rgba(255, 255, 255, 0.1);
             width: 100%;
-            background-color: #ecf0f1;
+            background-color: rgba(255, 255, 255, 0.05);
         }
         .partition {
             display: flex;
@@ -83,39 +697,47 @@
         }
     </style>
 </head>
-<body class="font-sans">
+<body>
+    <!-- Фоновая анимация -->
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white">Этапы установки</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#step-1" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">1. Загрузка и начало</a></li>
+                        <li><a href="#step-2" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Разметка диска</a></li>
+                        <li><a href="#step-3" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Настройка пользователя</a></li>
+                        <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Выбор ПО</a></li>
+                        <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. Завершение</a></li>
+                        <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Знакомство с nmap</a></li>
+                        <li><a href="#step-7" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">7. Доступ к Dark Web через Tor</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-8">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white">Руководство по установке Kali Linux</h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Пошаговая инструкция для установки и настройки Kali Linux на виртуальной машине VMware.</p>
+                </header>
 
-    <div class="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-8 p-4 md:p-8">
-        
-        <aside class="w-full md:w-1/4 lg:w-1/5">
-            <nav id="sidebar" class="md:sticky top-8 bg-white p-4 rounded-lg shadow-md">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Этапы установки</h3>
-                <ul class="space-y-2">
-                    <li><a href="#step-1" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">1. Загрузка и начало</a></li>
-                    <li><a href="#step-2" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">2. Разметка диска</a></li>
-                    <li><a href="#step-3" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">3. Настройка пользователя</a></li>
-                    <li><a href="#step-4" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">4. Выбор ПО</a></li>
-                    <li><a href="#step-5" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">5. Завершение</a></li>
-                    <li><a href="#step-6" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">6. Знакомство с nmap</a></li>
-                    <li><a href="#step-7" class="nav-link block w-full text-left px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 transition-colors">7. Доступ к Dark Web через Tor</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <main class="w-full md:w-3/4 lg:w-4/5">
-            <header class="bg-white p-8 rounded-lg shadow-lg mb-8">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Руководство по установке Kali Linux</h1>
-                <p class="text-lg text-gray-600">Пошаговая инструкция для установки и настройки Kali Linux на виртуальной машине VMware.</p>
-            </header>
-
-            <div id="content" class="space-y-8">
-                
-                <section id="step-1" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Загрузка и начало установки</h2>
-                    <p class="mb-4 text-gray-700">После создания виртуальной машины в VMware и её запуска, вы увидите загрузочное меню. Выберите **"Graphical install"** для начала установки с удобным графическим интерфейсом.  Далее следуйте инструкциям на экране.</p>
-                    <div class="bg-gray-100 p-4 rounded-md">
-                        <h4 class="font-semibold mb-2">Последовательность действий:</h4>
-                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                <section id="step-1" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">1. Загрузка и начало установки</h2>
+                    <p class="mb-4 text-gray-200">После создания виртуальной машины в VMware и её запуска, вы увидите загрузочное меню. Выберите **"Graphical install"** для начала установки с удобным графическим интерфейсом.  Далее следуйте инструкциям на экране.</p>
+                    <div class="bg-gray-800/50 p-4 rounded-md border border-red-500/30">
+                        <h4 class="font-semibold mb-2 text-white">Последовательность действий:</h4>
+                        <ul class="list-disc list-inside text-gray-200 space-y-1">
                             <li>**Select a language**: Выберите `Русский` или `English`.</li>
                             <li>**Select your location**: Выберите вашу страну.</li>
                             <li>**Configure the keyboard**: Выберите раскладку клавиатуры.</li>
@@ -124,18 +746,18 @@
                     </div>
                 </section>
 
-                <section id="step-2" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">2. Разметка диска</h2>
-                    <p class="mb-4 text-gray-700">Инсталлятор Kali Linux предлагает несколько вариантов разметки. Для лабораторной работы проще всего использовать автоматический режим. Kali займет весь виртуальный диск и создаст два раздела: корневой (`/`) и Swap.</p>
+                <section id="step-2" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">2. Разметка диска</h2>
+                    <p class="mb-4 text-gray-200">Инсталлятор Kali Linux предлагает несколько вариантов разметки. Для лабораторной работы проще всего использовать автоматический режим. Kali займет весь виртуальный диск и создаст два раздела: корневой (`/`) и Swap.</p>
                      <div class="mb-6 partition-visualizer-mobile">
-                        <h4 class="font-semibold mb-2 text-center text-gray-700">Интерактивная схема разделов</h4>
+                        <h4 class="font-semibold mb-2 text-center text-gray-200">Интерактивная схема разделов</h4>
                         <div id="partition-visualizer" class="partition-bar shadow-inner">
                             <div id="part-swap" class="partition" style="width: 15%; background-color: #556270;">Swap</div>
                             <div id="part-root" class="partition" style="width: 85%; background-color: #4ecdc4;">/ (Root)</div>
                         </div>
                     </div>
-                    <p class="text-gray-600 text-sm mt-4 mb-2">Последовательность действий в инсталляторе:</p>
-                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
+                    <p class="text-gray-300 text-sm mt-4 mb-2">Последовательность действий в инсталляторе:</p>
+                    <div class="bg-gray-800/50 p-4 rounded-md text-gray-200 border border-red-500/30">
                         <ul class="list-disc list-inside space-y-2">
                             <li>На экране **"Partition disks"** выберите **"Guided - use entire disk"**.</li>
                             <li>Выберите виртуальный диск для установки.</li>
@@ -146,11 +768,11 @@
                     </div>
                 </section>
 
-                <section id="step-3" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">3. Настройка пользователя</h2>
-                    <p class="mb-4 text-gray-700">В Kali Linux по умолчанию используется пользователь с ограниченными правами. На этом этапе вы создадите своего пользователя и зададите для него пароль.</p>
-                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
-                        <h4 class="font-semibold mb-2">Процесс создания пользователя:</h4>
+                <section id="step-3" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">3. Настройка пользователя</h2>
+                    <p class="mb-4 text-gray-200">В Kali Linux по умолчанию используется пользователь с ограниченными правами. На этом этапе вы создадите своего пользователя и зададите для него пароль.</p>
+                    <div class="bg-gray-800/50 p-4 rounded-md text-gray-200 border border-red-500/30">
+                        <h4 class="font-semibold mb-2 text-white">Процесс создания пользователя:</h4>
                         <ul class="list-disc list-inside space-y-2">
                             <li>**Full name for the new user**: Введите ваше полное имя.</li>
                             <li>**Username for your account**: Придумайте имя пользователя (например, `kali-user`).</li>
@@ -160,11 +782,11 @@
                     </div>
                 </section>
 
-                <section id="step-4" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">4. Выбор программного обеспечения</h2>
-                    <p class="mb-4 text-gray-700">На этом этапе вы можете выбрать, какие инструменты и компоненты Kali Linux установить. Для стандартной лабораторной работы достаточно оставить все опции по умолчанию. Это обеспечит наличие базовых инструментов и графической среды.</p>
-                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
-                        <h4 class="font-semibold mb-2">Выбор компонентов:</h4>
+                <section id="step-4" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">4. Выбор программного обеспечения</h2>
+                    <p class="mb-4 text-gray-200">На этом этапе вы можете выбрать, какие инструменты и компоненты Kali Linux установить. Для стандартной лабораторной работы достаточно оставить все опции по умолчанию. Это обеспечит наличие базовых инструментов и графической среды.</p>
+                    <div class="bg-gray-800/50 p-4 rounded-md text-gray-200 border border-red-500/30">
+                        <h4 class="font-semibold mb-2 text-white">Выбор компонентов:</h4>
                         <ul class="list-disc list-inside space-y-2">
                             <li>Оставьте все опции по умолчанию, включая **"GNOME"** и **"Kali default tools"**.</li>
                             <li>Нажмите **"Continue"** и дождитесь завершения установки.</li>
@@ -172,46 +794,46 @@
                     </div>
                 </section>
 
-                <section id="step-5" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">5. Завершение установки</h2>
-                    <p class="mb-4 text-gray-700">Последний этап — установка загрузчика GRUB и перезагрузка. Kali Linux автоматически установит загрузчик на ваш виртуальный диск.</p>
-                    <div class="bg-gray-100 p-4 rounded-md text-gray-700">
-                        <h4 class="font-semibold mb-2">Установка GRUB:</h4>
+                <section id="step-5" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">5. Завершение установки</h2>
+                    <p class="mb-4 text-gray-200">Последний этап — установка загрузчика GRUB и перезагрузка. Kali Linux автоматически установит загрузчик на ваш виртуальный диск.</p>
+                    <div class="bg-gray-800/50 p-4 rounded-md text-gray-200 border border-red-500/30">
+                        <h4 class="font-semibold mb-2 text-white">Установка GRUB:</h4>
                         <ul class="list-disc list-inside space-y-2">
                             <li>На вопрос **"Install the GRUB boot loader to the primary drive?"** ответьте **"Yes"**.</li>
                             <li>Выберите диск для установки загрузчика.</li>
                             <li>Нажмите **"Continue"**, дождитесь завершения и перезагрузите виртуальную машину.</li>
                         </ul>
                     </div>
-                    <div class="mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                    <div class="mt-6 bg-green-900/30 border-l-4 border-green-500 text-green-300 p-4 rounded-md border border-green-500/30">
                         <p class="font-bold">Поздравляю!</p>
                         <p>Вы успешно установили Kali Linux. Теперь вы можете войти в систему с помощью созданного пользователя и пароля.</p>
                     </div>
                 </section>
 
-                <section id="step-6" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">6. Бонус: Знакомство с утилитой nmap</h2>
-                    <p class="mb-4 text-gray-700">`nmap` (Network Mapper) — это мощная утилита для исследования сетей. В рамках этой лабораторной работы мы научимся выполнять базовые и продвинутые сканирования.</p>
+                <section id="step-6" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">6. Бонус: Знакомство с утилитой nmap</h2>
+                    <p class="mb-4 text-gray-200">`nmap` (Network Mapper) — это мощная утилита для исследования сетей. В рамках этой лабораторной работы мы научимся выполнять базовые и продвинутые сканирования.</p>
                     
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.1. Подготовка: IP-адрес цели</h3>
-                    <p class="mb-4 text-gray-700">Прежде чем сканировать, нужно знать IP-адрес целевого хоста. Если вы работаете с другой виртуальной машиной в той же сети, используйте команду `ifconfig` в её терминале, чтобы найти IP. В нашем случае для начала мы будем сканировать сам Kali Linux, используя `localhost` или IP-адрес `127.0.0.1`.</p>
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">6.1. Подготовка: IP-адрес цели</h3>
+                    <p class="mb-4 text-gray-200">Прежде чем сканировать, нужно знать IP-адрес целевого хоста. Если вы работаете с другой виртуальной машиной в той же сети, используйте команду `ifconfig` в её терминале, чтобы найти IP. В нашем случае для начала мы будем сканировать сам Kali Linux, используя `localhost` или IP-адрес `127.0.0.1`.</p>
                     
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.2. Базовое сканирование</h3>
-                    <p class="mb-4 text-gray-700">Самая простая команда для сканирования и её расширенный вариант с подробным выводом.</p>
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">6.2. Базовое сканирование</h3>
+                    <p class="mb-4 text-gray-200">Самая простая команда для сканирования и её расширенный вариант с подробным выводом.</p>
                     <div class="code-block mb-4">
                         <button class="copy-btn">Копировать</button>
                         <pre><code class="language-bash"># Базовое сканирование наиболее популярных портов
 nmap localhost</code></pre>
                     </div>
-                    <p class="text-gray-700 mb-4">Эта команда выполнит базовое сканирование наиболее популярных портов. Вывод покажет список открытых портов и их состояние.  Чтобы получить более подробный вывод, используйте флаг `-v` (verbose):</p>
+                    <p class="text-gray-200 mb-4">Эта команда выполнит базовое сканирование наиболее популярных портов. Вывод покажет список открытых портов и их состояние.  Чтобы получить более подробный вывод, используйте флаг `-v` (verbose):</p>
                     <div class="code-block mb-4">
                         <button class="copy-btn">Копировать</button>
                         <pre><code class="language-bash">nmap -v localhost</code></pre>
                     </div>
                     
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.3. Сканирование служб и определение ОС</h3>
-                    <p class="mb-4 text-gray-700">Nmap может не только определить, открыт ли порт, но и какая служба на нём работает и даже какая операционная система установлена на удалённом хосте. Эти опции требуют прав администратора, поэтому используйте `sudo`.</p>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">6.3. Сканирование служб и определение ОС</h3>
+                    <p class="mb-4 text-gray-200">Nmap может не только определить, открыт ли порт, но и какая служба на нём работает и даже какая операционная система установлена на удалённом хосте. Эти опции требуют прав администратора, поэтому используйте `sudo`.</p>
+                    <ul class="list-disc list-inside text-gray-200 space-y-2 mb-4">
                         <li>**Определение версий служб (`-sV`)**: Этот флаг позволяет узнать точную версию службы, работающей на открытом порту.</li>
                         <div class="code-block">
                             <button class="copy-btn">Копировать</button>
@@ -229,9 +851,9 @@ nmap localhost</code></pre>
                         </div>
                     </ul>
 
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.4. Сканирование определённых портов</h3>
-                    <p class="mb-4 text-gray-700">Для ускорения процесса или для анализа конкретных служб можно указать порты вручную с помощью флага `-p`.</p>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">6.4. Сканирование определённых портов</h3>
+                    <p class="mb-4 text-gray-200">Для ускорения процесса или для анализа конкретных служб можно указать порты вручную с помощью флага `-p`.</p>
+                    <ul class="list-disc list-inside text-gray-200 space-y-2 mb-4">
                         <li>**Сканирование отдельных портов**:</li>
                         <div class="code-block">
                             <button class="copy-btn">Копировать</button>
@@ -244,27 +866,27 @@ nmap localhost</code></pre>
                         </div>
                     </ul>
                     
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">6.5. Сохранение результатов</h3>
-                    <p class="mb-4 text-gray-700">Для лабораторной работы важно сохранять результаты сканирования. Nmap позволяет сохранить вывод в нескольких форматах с помощью флага `-oA`.</p>
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">6.5. Сохранение результатов</h3>
+                    <p class="mb-4 text-gray-200">Для лабораторной работы важно сохранять результаты сканирования. Nmap позволяет сохранить вывод в нескольких форматах с помощью флага `-oA`.</p>
                     <div class="code-block mb-4">
                         <button class="copy-btn">Копировать</button>
                         <pre><code class="language-bash"># Сканирование и сохранение в 3 формата (XML, nmap, grepable)
 sudo nmap -sV -O -oA lab-report localhost</code></pre>
                     </div>
 
-                    <p class="mt-4 text-gray-700">**Практическое задание:** Попробуйте просканировать другую виртуальную машину в вашей локальной сети, используя IP-адрес вместо `localhost`.</p>
-                    <p class="mt-4 text-gray-700 font-bold">Теперь, когда вы знаете основы, попробуйте поэкспериментировать с различными флагами и их комбинациями, чтобы получить наиболее полную информацию о целевом хосте.</p>
+                    <p class="mt-4 text-gray-200">**Практическое задание:** Попробуйте просканировать другую виртуальную машину в вашей локальной сети, используя IP-адрес вместо `localhost`.</p>
+                    <p class="mt-4 text-gray-200 font-bold">Теперь, когда вы знаете основы, попробуйте поэкспериментировать с различными флагами и их комбинациями, чтобы получить наиболее полную информацию о целевом хосте.</p>
                 </section>
 
-                <section id="step-7" class="step bg-white p-8 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">7. Бонус: Доступ к Dark Web через Tor Browser</h2>
-                    <p class="mb-4 text-gray-700">
+                <section id="step-7" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">7. Бонус: Доступ к Dark Web через Tor Browser</h2>
+                    <p class="mb-4 text-gray-200">
                         Добро пожаловать в темный интернет, или, как его еще называют, Dark Web. Это часть интернета, 
                         которая недоступна через обычные поисковые системы и требует специального программного обеспечения для доступа. 
                         В Kali Linux, одной из популярных операционных систем для тестирования на проникновение, 
                         доступ к Dark Web можно получить через Tor Browser.
                     </p>
-                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-4">
+                    <div class="bg-yellow-900/30 border-l-4 border-yellow-500 text-yellow-300 p-4 rounded-md mb-4 border border-yellow-500/30">
                         <p class="font-bold">Важное предупреждение:</p>
                         <p>
                             Темный интернет может содержать незаконный, шокирующий или вводящий в заблуждение контент. 
@@ -274,7 +896,7 @@ sudo nmap -sV -O -oA lab-report localhost</code></pre>
                             как можно использовать Tor Browser в Kali Linux.
                         </p>
                     </div>
-                    <p class="mb-4 text-gray-700">
+                    <p class="mb-4 text-gray-200">
                         Tor (The Onion Router) — это бесплатная сеть и программное обеспечение, 
                         которое позволяет анонимно использовать интернет, маскируя ваш IP-адрес. 
                         Tor Browser — это специальная версия браузера Firefox, настроенная для работы через сеть Tor, 
@@ -282,8 +904,8 @@ sudo nmap -sV -O -oA lab-report localhost</code></pre>
                         (специфичные для Tor сайты, составляющие основную часть Dark Web).
                     </p>
                     
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 1: Установка Tor Browser (если не установлен)</h3>
-                    <p class="mb-4 text-gray-700">
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">Шаг 1: Установка Tor Browser (если не установлен)</h3>
+                    <p class="mb-4 text-gray-200">
                         Иногда Tor Browser может быть уже установлен в Kali Linux. 
                         Проверить это можно, открыв терминал (например, `Ctrl + Alt + T`) и введя:
                     </p>
@@ -291,15 +913,15 @@ sudo nmap -sV -O -oA lab-report localhost</code></pre>
                         <button class="copy-btn">Копировать</button>
                         <pre><code class="language-bash">tor-browser</code></pre>
                     </div>
-                    <p class="mb-4 text-gray-700">
+                    <p class="mb-4 text-gray-200">
                         Если команда выполнится и откроется Tor Browser, вы можете сразу перейти к следующему шагу.
                     </p>
-                    <p class="mb-4 text-gray-700">
+                    <p class="mb-4 text-gray-200">
                         Если команда не найдена, вам нужно установить Tor Browser. 
                         В Kali Linux это делается через менеджер пакетов `apt`.
                     </p>
-                    <div class="bg-gray-100 p-4 rounded-md text-gray-700 mb-4">
-                        <h4 class="font-semibold mb-2">Процесс установки:</h4>
+                    <div class="bg-gray-800/50 p-4 rounded-md text-gray-200 mb-4 border border-red-500/30">
+                        <h4 class="font-semibold mb-2 text-white">Процесс установки:</h4>
                         <ol class="list-decimal list-inside space-y-2">
                             <li><strong>Обновите список пакетов:</strong></li>
                             <div class="code-block mt-2">
@@ -317,11 +939,11 @@ sudo nmap -sV -O -oA lab-report localhost</code></pre>
                         </p>
                     </div>
 
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 2: Запуск Tor Browser</h3>
-                    <p class="mb-4 text-gray-700">
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">Шаг 2: Запуск Tor Browser</h3>
+                    <p class="mb-4 text-gray-200">
                         После установки вы можете запустить Tor Browser следующими способами:
                     </p>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
+                    <ul class="list-disc list-inside text-gray-200 space-y-2 mb-4">
                         <li><strong>Через терминал:</strong> Введите команду `tor-browser` и нажмите Enter.</li>
                         <div class="code-block mt-2">
                             <button class="copy-btn">Копировать</button>
@@ -330,44 +952,44 @@ sudo nmap -sV -O -oA lab-report localhost</code></pre>
                         <li><strong>Через графический интерфейс:</strong> Откройте меню приложений Kali Linux. Перейдите в раздел "Privacy" (Конфиденциальность). Найдите и кликните по ярлыку "Tor Browser".</li>
                     </ul>
 
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 3: Подключение к сети Tor</h3>
-                    <p class="mb-4 text-gray-700">
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">Шаг 3: Подключение к сети Tor</h3>
+                    <p class="mb-4 text-gray-200">
                         При первом запуске Tor Browser откроется специальный мастер подключения.
                     </p>
-                    <ol class="list-decimal list-inside text-gray-700 space-y-2 mb-4">
+                    <ol class="list-decimal list-inside text-gray-200 space-y-2 mb-4">
                         <li>Выберите предпочитаемый язык (например, `English` или `Русский`).</li>
                         <li>Нажмите `Connect`.</li>
                         <li>Tor Browser начнет подключаться к сети Tor. Это может занять несколько минут. Вы увидите прогресс и сообщения о подключении к узлам сети.</li>
                         <li>Когда подключение будет установлено, откроется окно браузера Firefox с установленными настройками безопасности и анонимности Tor.</li>
                     </ol>
 
-                    <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Шаг 4: Навигация по Dark Web</h3>
-                    <p class="mb-4 text-gray-700">
+                    <h3 class="text-xl font-bold text-white mt-6 mb-2">Шаг 4: Навигация по Dark Web</h3>
+                    <p class="mb-4 text-gray-200">
                         Теперь вы подключены к сети Tor. Вы можете:
                     </p>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
-                        <li>Посетить сайт проекта Tor: <code class="bg-gray-200 px-1 rounded">https://www.torproject.org/</code> для получения дополнительной информации.</li>
-                        <li>Посетить каталоги .onion сайтов: Существуют специальные сайты-каталоги, которые перечисляют другие .onion адреса. Примером может быть <code class="bg-gray-200 px-1 rounded">http://torlinks.co/</code> или другие, которые можно найти (помните о рисках).</li>
-                        <li>Использовать специальные поисковые системы: Некоторые поисковые системы, работающие через Tor, например <code class="bg-gray-200 px-1 rounded">http://search.onion/</code>, позволяют искать .onion сайты.</li>
+                    <ul class="list-disc list-inside text-gray-200 space-y-2 mb-4">
+                        <li>Посетить сайт проекта Tor: <code class="bg-gray-800 px-1 rounded">https://www.torproject.org/  </code> для получения дополнительной информации.</li>
+                        <li>Посетить каталоги .onion сайтов: Существуют специальные сайты-каталоги, которые перечисляют другие .onion адреса. Примером может быть <code class="bg-gray-800 px-1 rounded">http://torlinks.co/</code> или другие, которые можно найти (помните о рисках).</li>
+                        <li>Использовать специальные поисковые системы: Некоторые поисковые системы, работающие через Tor, например <code class="bg-gray-800 px-1 rounded">http://search.onion/</code>, позволяют искать .onion сайты.</li>
                     </ul>
-                    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md">
+                    <div class="bg-blue-900/30 border-l-4 border-blue-500 text-blue-300 p-4 rounded-md border border-blue-500/30">
                         <p class="font-bold">Помните:</p>
                         <ul class="list-disc list-inside">
                             <li>Скорость соединения через Tor обычно низкая.</li>
                             <li>Никогда не открывайте файлы, скачанные с .onion сайтов, без надлежащей проверки.</li>
                             <li>Не вводите личную информацию на подозрительных сайтах.</li>
-                            <li>Используйте только официальный Tor Browser, загруженный с <code class="bg-gray-200 px-1 rounded">torproject.org</code>, чтобы избежать поддельных версий.</li>
+                            <li>Используйте только официальный Tor Browser, загруженный с <code class="bg-gray-800 px-1 rounded">torproject.org</code>, чтобы избежать поддельных версий.</li>
                         </ul>
                     </div>
-                    <p class="mt-4 text-gray-700 font-bold">
+                    <p class="mt-4 text-gray-200 font-bold">
                         Поздравляем! Вы узнали, как получить доступ к Dark Web через Tor Browser в Kali Linux.
                     </p>
                 </section>
 
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const copyButtons = document.querySelectorAll('.copy-btn');
