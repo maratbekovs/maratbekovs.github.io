@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лекция: Дистрибутивы Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Red Future (Dark, Red-accented) -->
+    <!-- Application Structure Plan: A single-page, vertical layout with a sticky sidebar for navigation. This structure allows for a linear lecture flow while providing quick access to specific topics. Each main topic (concepts, categories, comparison) is a distinct section. An interactive comparison table is used to let students explore different distros dynamically, reinforcing the content. -->
+    <!-- Visualization & Content Choices: Lecture Content -> Goal: Inform -> Presentation: Rich text blocks with headers and lists -> Justification: Provides clear, scannable information. Comparison Table -> Goal: Compare/Organize -> Presentation: Interactive table with click-to-reveal details -> Interaction: Clicking a distro name reveals its details in a panel below. This makes dense information more digestible. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            animation: fadeInDown 1s ease;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+        .logo-square {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: rotate 10s infinite linear;
+        }
+        .logo-circle {
+            width: 20px;
+            height: 20px;
+            background: var(--text);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            animation: pulse 2s infinite alternate;
+        }
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .logo span {
+            font-weight: 300;
+            color: var(--text-secondary);
+        }
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            padding: 80px 0;
+            min-height: 80vh;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero-title span {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+        .cta-button {
+            background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 42, 42, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(255, 42, 42, 0.4);
+        }
+        .ghost-button {
+            background: transparent;
+            border: 2px solid var(--accent);
+            padding: 13px 38px;
+            border-radius: 30px;
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .ghost-button:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-5px);
+        }
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .floating-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+        .card-content h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .card-content p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .security-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .security-indicator span {
+            font-size: 0.9rem;
+            color: var(--success-green);
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+            padding-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .features {
+            padding: 100px 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .feature {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .feature h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .feature p {
+            color: var(--text-secondary);
+        }
+        .game-section {
+            padding: 100px 0;
+        }
+        .quiz-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .quiz-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .progress-bar {
+            width: 300px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 20%;
+            background: var(--accent);
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-body {
+            margin-bottom: 40px;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-container h3 {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .option:hover {
+            background: rgba(255, 42, 42, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .quiz-btn {
+            background: var(--accent);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .quiz-btn:hover {
+            background: var(--accent-dark);
+        }
+        .info-section {
+            padding: 100px 0;
+        }
+        .rules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .rule {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+        }
+        .rule-number {
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rule h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .rule p {
+            color: var(--text-secondary);
+        }
+        .footer {
+            margin-top: 100px;
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .footer-section p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .access-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .access-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .access-links a:hover {
+            color: var(--accent);
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 30px;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav {
+                display: none;
+            }
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            .quiz-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            .progress-bar {
+                width: 100%;
+            }
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        .nav-link.active {
+            background-color: rgba(255, 42, 42, 0.2);
+            color: var(--accent);
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        .nav-link::after {
+            display: none;
+        }
+        .nav-link.active:hover {
+            background-color: rgba(255, 42, 42, 0.3);
+        }
+        .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+        }
+        .code-block pre {
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <!-- Фоновая анимация -->
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white">Содержание</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#intro" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Введение</a></li>
+                        <li><a href="#concepts" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Основные концепции</a></li>
+                        <li><a href="#server-distros" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Серверные дистрибутивы</a></li>
+                        <li><a href="#desktop-distros" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Для обычных пользователей</a></li>
+                        <li><a href="#security-distros" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Для безопасности</a></li>
+                        <li><a href="#enthusiast-distros" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Для энтузиастов</a></li>
+                        <li><a href="#comparison" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">Сравнение</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-8">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white">Лекция: Дистрибутивы Linux и их применение</h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Погружение в мир операционных систем на базе ядра Linux.</p>
+                </header>
+
+                <section id="intro" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Введение</h2>
+                    <p class="text-gray-200">
+                        В мире информационных технологий операционные системы на базе ядра Linux занимают особое место. Они отличаются открытостью, гибкостью и огромным разнообразием. Новичку может быть сложно разобраться, чем отличается один дистрибутив от другого. Эта лекция поможет вам понять ключевые различия и выбрать подходящую систему для любой задачи.
+                    </p>
+                </section>
+
+                <section id="concepts" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Основные концепции</h2>
+                    <p class="text-gray-200 mb-4">
+                        Каждый дистрибутив Linux состоит из ядра (Linux Kernel), набора утилит и приложений. Основные компоненты, которые определяют уникальность каждого дистрибутива:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-200">
+                        <li><strong>Ядро Linux (Kernel):</strong> Центральная часть ОС, которая управляет ресурсами компьютера.</li>
+                        <li><strong>Утилиты GNU:</strong> Набор стандартных инструментов командной строки, таких как <code>ls</code>, <code>cd</code>, <code>grep</code>, которые делают систему функциональной.</li>
+                        <li><strong>Менеджер пакетов:</strong> Инструмент для установки, обновления и удаления программ. Например, <code>apt</code> в Debian, <code>pacman</code> в Arch или <code>dnf</code> в Fedora. Это один из самых важных отличительных признаков дистрибутива.</li>
+                        <li><strong>Среда рабочего стола (Desktop Environment, DE):</strong> Графическая оболочка, с которой взаимодействует пользователь. Примеры: GNOME, KDE Plasma, XFCE, Cinnamon.</li>
+                    </ul>
+                </section>
+
+                <section id="server-distros" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Серверные дистрибутивы</h2>
+                    <p class="text-gray-200 mb-4">
+                        Эти дистрибутивы оптимизированы для стабильной и безопасной работы 24/7. Они часто не имеют графического интерфейса по умолчанию и используются для веб-серверов, баз данных и облачных вычислений.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-200">
+                        <li><strong>Debian:</strong> Основа для многих других дистрибутивов. Известен своей стабильностью, надёжностью и огромным репозиторием пакетов. Идеален для долгосрочной эксплуатации.</li>
+                        <li><strong>Ubuntu Server:</strong> Версия популярного дистрибутива, ориентированная на серверное использование. Проста в установке и имеет хорошую поддержку.</li>
+                        <li><strong>CentOS / RHEL:</strong> Enterprise-уровень. RHEL (Red Hat Enterprise Linux) — коммерческий дистрибутив, а CentOS — его бесплатная альтернатива. Их выбирают за исключительную стабильность и долгосрочную поддержку.</li>
+                    </ul>
+                </section>
+
+                <section id="desktop-distros" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Для обычных пользователей</h2>
+                    <p class="text-gray-200 mb-4">
+                        Эти дистрибутивы созданы для простоты использования. Они включают интуитивно понятный графический интерфейс, предустановленные приложения и дружелюбны к новичкам.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-200">
+                        <li><strong>Ubuntu Desktop:</strong> Пожалуй, самый известный дистрибутив. Отличное сочетание простоты, функциональности и широкой поддержки.</li>
+                        <li><strong>Linux Mint:</strong> Основан на Ubuntu, но использует более традиционную среду рабочего стола (Cinnamon), что делает его похожим на Windows. Прекрасный выбор для тех, кто переходит с Windows.</li>
+                        <li><strong>Fedora:</strong> Дистрибутив, спонсируемый Red Hat, который фокусируется на самых свежих технологиях. Отличный вариант для разработчиков и тех, кто хочет быть на "передовой" Linux.</li>
+                    </ul>
+                </section>
+
+                <section id="security-distros" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Для безопасности</h2>
+                    <p class="text-gray-200 mb-4">
+                        Эти дистрибутивы предназначены для специалистов по кибербезопасности и пентестингу. Они содержат сотни предустановленных инструментов для тестирования на проникновение и анализа безопасности.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-200">
+                        <li><strong>Kali Linux:</strong> Самый популярный дистрибутив для пентестинга. Включает огромную коллекцию инструментов, от сканеров портов до эксплоитов.</li>
+                        <li><strong>Parrot OS:</strong> Ещё один дистрибутив для безопасности, который предлагает более легкую и удобную среду, чем Kali, а также инструменты для анонимности и криптографии.</li>
+                    </ul>
+                </section>
+
+                <section id="enthusiast-distros" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Для энтузиастов</h2>
+                    <p class="text-gray-200 mb-4">
+                        Дистрибутивы, которые предоставляют максимальный контроль над системой. Их установка и настройка требуют времени, но взамен пользователь получает глубокое понимание ОС и систему, идеально подогнанную под свои нужды.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-200">
+                        <li><strong>Arch Linux:</strong> Философия KISS (Keep It Simple, Stupid). Пользователь собирает систему из базовых компонентов. Отличное средство для глубокого изучения Linux.</li>
+                        <li><strong>Gentoo:</strong> Дистрибутив, который компилирует программы из исходного кода. Это обеспечивает максимальную производительность и гибкость, но требует много времени и ресурсов.</li>
+                    </ul>
+                </section>
+
+                <section id="comparison" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-white mb-4">Сравнение дистрибутивов</h2>
+                    <p class="text-gray-200 mb-4">
+                        Кликните на название дистрибутива, чтобы увидеть его ключевые особенности.
+                    </p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="debian">Debian</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="ubuntu">Ubuntu</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="centos">CentOS</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="arch">Arch Linux</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="kali">Kali Linux</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="mint">Linux Mint</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="fedora">Fedora</button>
+                    </div>
+                    <div id="distro-details" class="bg-gray-800/50 p-6 rounded-lg border border-red-500/30 hidden">
+                        <h3 id="distro-title" class="text-2xl font-bold text-red-500 mb-2"></h3>
+                        <p id="distro-description" class="text-gray-300"></p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const distroButtons = document.querySelectorAll('.distro-btn');
+            const distroDetails = document.getElementById('distro-details');
+            const distroTitle = document.getElementById('distro-title');
+            const distroDescription = document.getElementById('distro-description');
+
+            const distros = {
+                debian: {
+                    title: "Debian",
+                    description: "Является фундаментом для многих дистрибутивов (включая Ubuntu). Известен своей стабильностью, надёжностью и огромным репозиторием пакетов. Идеален для серверов."
+                },
+                ubuntu: {
+                    title: "Ubuntu",
+                    description: "Популярный дистрибутив для новичков. Обладает интуитивно понятным интерфейсом и широкой поддержкой сообщества. Существуют версии как для десктопов, так и для серверов."
+                },
+                centos: {
+                    title: "CentOS / RHEL",
+                    description: "Ориентирован на корпоративный сегмент. Отличается исключительной стабильностью, безопасностью и долгосрочной поддержкой. Часто используется в крупных компаниях."
+                },
+                arch: {
+                    title: "Arch Linux",
+                    description: "Следует принципу KISS. Предоставляет пользователю полную свободу в сборке и настройке системы. Отличный выбор для глубокого изучения Linux и кастомизации."
+                },
+                kali: {
+                    title: "Kali Linux",
+                    description: "Дистрибутив для специалистов по кибербезопасности. Содержит сотни предустановленных инструментов для пентестинга, анализа безопасности и цифровой криминалистики."
+                },
+                mint: {
+                    title: "Linux Mint",
+                    description: "Основан на Ubuntu, но с более традиционным интерфейсом, похожим на Windows. Это делает его отличным выбором для пользователей, переходящих с Windows на Linux."
+                },
+                fedora: {
+                    title: "Fedora",
+                    description: "Спонсируется Red Hat. Является испытательным полигоном для новых технологий, которые затем попадают в RHEL. Подходит для разработчиков, которым нужны новейшие версии ПО."
+                }
+            };
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-30% 0px -30% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            distroButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const distroKey = button.dataset.distro;
+                    const selectedDistro = distros[distroKey];
+
+                    if (selectedDistro) {
+                        distroTitle.textContent = selectedDistro.title;
+                        distroDescription.textContent = selectedDistro.description;
+                        distroDetails.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
