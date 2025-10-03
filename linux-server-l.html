@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лекция: Linux Server (Расширенная)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link.active {
+            background-color: rgba(255, 42, 42, 0.2);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem !important;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        .nav-link.active:hover {
+            background-color: rgba(255, 42, 42, 0.3);
+        }
+        
+        .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+        .code-block pre {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem;
+            overflow-x: auto;
+        }
+        .distro-btn {
+            background: rgba(255, 42, 42, 0.1);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .distro-btn:hover {
+            background: rgba(255, 42, 42, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 42, 42, 0.2);
+        }
+        .distro-btn.selected {
+            background: var(--accent) !important;
+            color: white !important;
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.5);
+            transform: scale(1.05);
+        }
+
+
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+             .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent);
+                padding-left: 1rem !important;
+             }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-red-500 pb-2">Содержание Лекции</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#intro" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Введение и Преимущества</a></li>
+                        <li><a href="#architecture" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Архитектура сервера</a></li>
+                        <li><a href="#filesystems" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Файловая система и LVM</a></li>
+                        <li><a href="#networking" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Сеть и Удаленный доступ</a></li>
+                        <li><a href="#tools" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. Контейнеризация и Автоматизация</a></li>
+                        <li><a href="#security" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Безопасность (Firewall/SELinux)</a></li>
+                        <li><a href="#comparison" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">7. Сравнение Дистрибутивов</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Linux Server: Глубокое <span class="text-red-500">Погружение</span> в бэкенд</h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">От ядра до контейнера: как Linux управляет глобальной инфраструктурой.</p>
+                </header>
+
+                <section id="intro" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">1. Введение и Преимущества</h2>
+                    <p class="text-gray-200 mb-4">
+                        <strong class="text-red-300">Серверный Linux</strong> — это не просто отсутствие графической оболочки. Это специально собранная система, оптимизированная для **долгосрочной стабильности**, **минимального потребления ресурсов** и **безопасности** в режиме 24/7. Подавляющее большинство веб-серверов, облачных платформ и суперкомпьютеров используют именно ядро Linux.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые преимущества в цифрах:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li>**Uptime (Время безотказной работы):** Способность работать **годами** без необходимости перезагрузки, что недостижимо для многих других ОС.</li>
+                        <li>**TCO (Total Cost of Ownership):** Минимальная или нулевая стоимость лицензирования, что значительно снижает общие расходы на инфраструктуру.</li>
+                        <li>**Масштабируемость:** Отлично работает как на одноплатном компьютере (Raspberry Pi), так и в огромных кластерах с тысячами ядер.</li>
+                    </ul>
+                </section>
+
+                <section id="architecture" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">2. Архитектура серверной ОС</h2>
+                    <p class="text-gray-200 mb-4">
+                        Серверный Linux имеет модульную структуру. Все его компоненты управляются из командной строки, обеспечивая максимальный контроль.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-200">
+                        <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
+                            <h3 class="font-semibold text-red-300 mb-2">Ядро (Kernel)</h3>
+                            <p class="text-sm">Центр управления, который взаимодействует с аппаратным обеспечением. Серверные ядра часто настроены для лучшей **пропускной способности сети** и **минимальной задержки (latency)**.</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
+                            <h3 class="font-semibold text-red-300 mb-2">Система инициализации (Systemd)</h3>
+                            <p class="text-sm">Определяет, какие сервисы запустить при старте. Это универсальный менеджер служб, который контролирует состояние каждого запущенного процесса.</p>
+                            <div class="code-block p-2 mt-2 rounded-md"><pre>systemctl enable nginx</pre></div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
+                            <h3 class="font-semibold text-red-300 mb-2">Менеджер пакетов (Package Manager)</h3>
+                            <p class="text-sm">Инструмент для установки и обновления всего ПО из репозиториев. Обеспечивает целостность системы и управление зависимостями (APT, DNF, Pacman).</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
+                            <h3 class="font-semibold text-red-300 mb-2">Оболочка (Shell)</h3>
+                            <p class="text-sm">Интерфейс командной строки, обычно **Bash**. Единственный способ взаимодействия с системой для большинства серверных задач.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="filesystems" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">3. Файловая система и Управление дисками (LVM)</h2>
+                    <p class="text-gray-200 mb-4">
+                        Выбор файловой системы и правильное управление дисками критически важны для серверной инфраструктуры, особенно для резервного копирования и масштабирования.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые FS:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li>**EXT4:** Стандартная, очень надежная и проверенная временем файловая система. Отличный компромисс между скоростью и стабильностью.</li>
+                        <li>**XFS:** Оптимизирована для работы с очень большими файлами и высокой пропускной способностью (популярна на серверах баз данных и хранилищах).</li>
+                        <li>**Btrfs/ZFS:** Продвинутые файловые системы с функциями <strong class="text-red-300">CoW (Copy-on-Write)</strong>, встроенным управлением томами и возможностью создания **мгновенных снимков (snapshots)**.</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">LVM (Logical Volume Manager):</h3>
+                    <p class="text-sm text-gray-200">
+                        Позволяет управлять дисковым пространством гибко, объединяя физические диски в один пул и позволяя **изменять размеры разделов на лету** без остановки системы.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Изменение размера логического тома (например, /var)</p>
+                        <pre>lvextend -L +10G /dev/vg_name/lv_var</pre>
+                    </div>
+                </section>
+
+                <section id="networking" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">4. Сеть и Удаленный доступ</h2>
+                    <p class="text-gray-200 mb-4">
+                        Сервер — это сетевая машина. Администрирование на 99% происходит удаленно по протоколу SSH.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Удаленное управление: SSH</h3>
+                    <p class="text-sm text-gray-200">
+                        <strong class="text-red-300">SSH (Secure Shell)</strong> — единственный безопасный способ получить доступ к командной строке. Для максимальной безопасности рекомендуется отключать вход по паролю и использовать **ключи SSH**.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Генерация пары SSH-ключей</p>
+                        <pre>ssh-keygen -t rsa -b 4096</pre>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Сетевые интерфейсы</h3>
+                    <p class="text-sm text-gray-200">
+                        Управление сетевыми картами и IP-адресами часто осуществляется через утилиты `ip` или специализированные менеджеры, такие как **Netplan** (в Ubuntu).
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Просмотр IP-адресов и интерфейсов</p>
+                        <pre>ip a</pre>
+                    </div>
+                </section>
+
+                <section id="tools" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">5. Контейнеризация и Автоматизация</h2>
+                    <p class="text-gray-200 mb-4">
+                        Современный сервер немыслим без **контейнеризации** (для изоляции приложений) и **автоматизации** (для быстрого развертывания).
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li>
+                            <strong class="text-red-300">Docker:</strong> Самый популярный инструмент для создания и запуска изолированных контейнеров. Позволяет упаковать приложение со всеми зависимостями.
+                            <div class="code-block p-2 mt-2 rounded-md"><pre>docker run -d -p 80:80 nginx</pre></div>
+                        </li>
+                        <li>
+                            <strong class="text-red-300">Kubernetes:</strong> Оркестратор контейнеров. Управляет кластерами, обеспечивает автоматическое масштабирование и самовосстановление сервисов в крупной инфраструктуре.
+                        </li>
+                        <li>
+                            <strong class="text-red-300">Ansible / Chef / Puppet:</strong> Инструменты **Configuration Management**. Позволяют описывать состояние сервера в виде кода (Infrastructure as Code) и автоматически применять конфигурации к тысячам машин.
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="security" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">6. Основы безопасности (Firewall / SELinux)</h2>
+                    <p class="text-gray-200 mb-4">
+                        Сервер, подключенный к Интернету, немедленно подвергается атакам. Безопасность строится на многоуровневой защите.
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li>
+                            <strong class="text-red-300">Firewall (Брандмауэр):</strong> Контролирует сетевой трафик. На Debian/Ubuntu часто используется **UFW**, на RHEL-подобных — **firewalld**. Политика: **Deny All by Default**.
+                            <div class="code-block p-2 mt-2 rounded-md"><pre>sudo ufw allow ssh</pre></div>
+                        </li>
+                        <li>
+                            <strong class="text-red-300">SELinux / AppArmor:</strong> Системы принудительного контроля доступа (Mandatory Access Control). Обеспечивают дополнительный уровень защиты, ограничивая, что программы могут делать даже при компрометации.
+                        </li>
+                        <li>
+                            <strong class="text-red-300">Fail2Ban:</strong> Сканирует логи на предмет неудачных попыток входа (например, SSH) и автоматически блокирует IP-адреса злоумышленников.
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="comparison" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">7. Сравнение серверных дистрибутивов</h2>
+                    <p class="text-gray-200 mb-4">
+                        Кликните на название дистрибутива, чтобы увидеть его ключевые особенности и назначение в серверной среде.
+                    </p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="ubuntu-server">Ubuntu Server LTS</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="debian">Debian Stable</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="rhel">RHEL / AlmaLinux</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="alpine">Alpine Linux</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="suse">SLES</button>
+                        <button class="distro-btn text-white bg-white/10 hover:bg-white/20 p-4 rounded-lg transition-colors" data-distro="centos-stream">CentOS Stream</button>
+                    </div>
+                    <div id="distro-details" class="bg-gray-800/50 p-6 rounded-lg border border-red-500/30 hidden">
+                        <h3 id="distro-title" class="text-2xl font-bold text-red-500 mb-2 font-mono"></h3>
+                        <p id="distro-description" class="text-gray-300"></p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const distroButtons = document.querySelectorAll('.distro-btn');
+            const distroDetails = document.getElementById('distro-details');
+            const distroTitle = document.getElementById('distro-title');
+            const distroDescription = document.getElementById('distro-description');
+
+            const distros = {
+                'ubuntu-server': {
+                    title: "Ubuntu Server LTS (Long Term Support)",
+                    description: "<strong>Назначение:</strong> Облачные и виртуальные среды. <strong>Особенности:</strong> LTS-версии (5 лет поддержки), отличная поддержка облачных провайдеров, использует APT и Systemd. <strong>Идеально для:</strong> Начинающих администраторов, хостинга веб-приложений."
+                },
+                'debian': {
+                    title: "Debian Stable",
+                    description: "<strong>Назначение:</strong> Максимальная стабильность. <strong>Особенности:</strong> Очень консервативный подход к обновлению ПО, что обеспечивает минимальное количество сбоев. Использует APT. <strong>Идеально для:</strong> Критически важных производственных серверов, где требуется максимальный Uptime."
+                },
+                'rhel': {
+                    title: "RHEL / AlmaLinux / Rocky Linux",
+                    description: "<strong>Назначение:</strong> Корпоративный и Enterprise-сегмент. <strong>Особенности:</strong> Исключительная безопасность (SELinux по умолчанию), долгосрочная поддержка (до 10 лет). Использует DNF/RPM. <strong>Идеально для:</strong> Финансовых, государственных и крупных корпоративных систем."
+                },
+                'alpine': {
+                    title: "Alpine Linux",
+                    description: "<strong>Назначение:</strong> Контейнеры и минималистичные ВМ. <strong>Особенности:</strong> Очень маленький размер (5-10 МБ), использует BusyBox и пакетный менеджер APK. <strong>Идеально для:</strong> Базовых образов Docker, IoT-устройств, микросервисов."
+                },
+                'suse': {
+                    title: "SLES (SUSE Linux Enterprise Server)",
+                    description: "<strong>Назначение:</strong> Enterprise-среды в Европе. <strong>Особенности:</strong> Известен мощным инструментом конфигурации YaST, стабильным ядром, отличной поддержкой SAP и мэйнфреймов. <strong>Идеально для:</strong> Крупных немецких и европейских компаний."
+                },
+                'centos-stream': {
+                    title: "CentOS Stream",
+                    description: "<strong>Назначение:</strong> Разработка для RHEL. <strong>Особенности:</strong> Является «upstream» для RHEL (тестирование перед релизом в RHEL). Использует DNF/RPM. <strong>Идеально для:</strong> Разработчиков, которым нужен RHEL-подобный опыт с более свежим ПО, но без оплаты RHEL."
+                }
+            };
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-30% 0px -30% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            distroButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove 'selected' from all buttons
+                    distroButtons.forEach(btn => btn.classList.remove('selected', 'bg-red-700/80', 'hover:bg-red-700/80'));
+
+                    // Add 'selected' to the clicked button
+                    button.classList.add('selected', 'bg-red-700/80', 'hover:bg-red-700/80');
+
+                    const distroKey = button.dataset.distro;
+                    const selectedDistro = distros[distroKey];
+
+                    if (selectedDistro) {
+                        distroTitle.textContent = selectedDistro.title;
+                        // Use innerHTML to process the strong tags
+                        distroDescription.innerHTML = selectedDistro.description; 
+                        distroDetails.classList.remove('hidden');
+                        distroDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
