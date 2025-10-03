@@ -174,7 +174,6 @@
             transform: scale(1.05);
         }
 
-
         @keyframes pulse {
             0% { opacity: 0.5; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.05); }
@@ -186,11 +185,11 @@
             100% { transform: translateY(0); }
         }
         @media (max-width: 768px) {
-             .nav-link.active {
+            .nav-link.active {
                 border-left: none;
                 border-bottom: 3px solid var(--accent);
                 padding-left: 1rem !important;
-             }
+            }
         }
     </style>
 </head>
@@ -231,13 +230,13 @@
                 <section id="intro" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">1. Введение и Преимущества</h2>
                     <p class="text-gray-200 mb-4">
-                        <strong class="text-red-300">Серверный Linux</strong> — это не просто отсутствие графической оболочки. Это специально собранная система, оптимизированная для **долгосрочной стабильности**, **минимального потребления ресурсов** и **безопасности** в режиме 24/7. Подавляющее большинство веб-серверов, облачных платформ и суперкомпьютеров используют именно ядро Linux.
+                        <strong class="text-red-300">Серверный Linux</strong> — это не просто отсутствие графической оболочки. Это специально собранная система, оптимизированная для <strong>долгосрочной стабильности</strong>, <strong>минимального потребления ресурсов</strong> и <strong>безопасности</strong> в режиме 24/7. Подавляющее большинство веб-серверов, облачных платформ и суперкомпьютеров используют именно ядро Linux.
                     </p>
                     <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые преимущества в цифрах:</h3>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
-                        <li>**Uptime (Время безотказной работы):** Способность работать **годами** без необходимости перезагрузки, что недостижимо для многих других ОС.</li>
-                        <li>**TCO (Total Cost of Ownership):** Минимальная или нулевая стоимость лицензирования, что значительно снижает общие расходы на инфраструктуру.</li>
-                        <li>**Масштабируемость:** Отлично работает как на одноплатном компьютере (Raspberry Pi), так и в огромных кластерах с тысячами ядер.</li>
+                        <li><strong>Uptime (Время безотказной работы):</strong> Способность работать <strong>годами</strong> без необходимости перезагрузки, что недостижимо для многих других ОС.</li>
+                        <li><strong>TCO (Total Cost of Ownership):</strong> Минимальная или нулевая стоимость лицензирования, что значительно снижает общие расходы на инфраструктуру.</li>
+                        <li><strong>Масштабируемость:</strong> Отлично работает как на одноплатном компьютере (Raspberry Pi), так и в огромных кластерах с тысячами ядер.</li>
                     </ul>
                 </section>
 
@@ -249,7 +248,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-200">
                         <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
                             <h3 class="font-semibold text-red-300 mb-2">Ядро (Kernel)</h3>
-                            <p class="text-sm">Центр управления, который взаимодействует с аппаратным обеспечением. Серверные ядра часто настроены для лучшей **пропускной способности сети** и **минимальной задержки (latency)**.</p>
+                            <p class="text-sm">Центр управления, который взаимодействует с аппаратным обеспечением. Серверные ядра часто настроены для лучшей <strong>пропускной способности сети</strong> и <strong>минимальной задержки (latency)</strong>.</p>
                         </div>
                         <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
                             <h3 class="font-semibold text-red-300 mb-2">Система инициализации (Systemd)</h3>
@@ -262,7 +261,7 @@
                         </div>
                         <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
                             <h3 class="font-semibold text-red-300 mb-2">Оболочка (Shell)</h3>
-                            <p class="text-sm">Интерфейс командной строки, обычно **Bash**. Единственный способ взаимодействия с системой для большинства серверных задач.</p>
+                            <p class="text-sm">Интерфейс командной строки, обычно <strong>Bash</strong>. Единственный способ взаимодействия с системой для большинства серверных задач.</p>
                         </div>
                     </div>
                 </section>
@@ -274,13 +273,13 @@
                     </p>
                     <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые FS:</h3>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
-                        <li>**EXT4:** Стандартная, очень надежная и проверенная временем файловая система. Отличный компромисс между скоростью и стабильностью.</li>
-                        <li>**XFS:** Оптимизирована для работы с очень большими файлами и высокой пропускной способностью (популярна на серверах баз данных и хранилищах).</li>
-                        <li>**Btrfs/ZFS:** Продвинутые файловые системы с функциями <strong class="text-red-300">CoW (Copy-on-Write)</strong>, встроенным управлением томами и возможностью создания **мгновенных снимков (snapshots)**.</li>
+                        <li><strong>EXT4:</strong> Стандартная, очень надежная и проверенная временем файловая система. Отличный компромисс между скоростью и стабильностью.</li>
+                        <li><strong>XFS:</strong> Оптимизирована для работы с очень большими файлами и высокой пропускной способностью (популярна на серверах баз данных и хранилищах).</li>
+                        <li><strong>Btrfs/ZFS:</strong> Продвинутые файловые системы с функциями <strong class="text-red-300">CoW (Copy-on-Write)</strong>, встроенным управлением томами и возможностью создания <strong>мгновенных снимков (snapshots)</strong>.</li>
                     </ul>
                     <h3 class="text-xl font-semibold text-white mt-4 mb-2">LVM (Logical Volume Manager):</h3>
                     <p class="text-sm text-gray-200">
-                        Позволяет управлять дисковым пространством гибко, объединяя физические диски в один пул и позволяя **изменять размеры разделов на лету** без остановки системы.
+                        Позволяет управлять дисковым пространством гибко, объединяя физические диски в один пул и позволяя <strong>изменять размеры разделов на лету</strong> без остановки системы.
                     </p>
                     <div class="code-block p-2 mt-2 rounded-md">
                         <p class="text-sm text-red-300">Изменение размера логического тома (например, /var)</p>
@@ -295,7 +294,7 @@
                     </p>
                     <h3 class="text-xl font-semibold text-white mt-4 mb-2">Удаленное управление: SSH</h3>
                     <p class="text-sm text-gray-200">
-                        <strong class="text-red-300">SSH (Secure Shell)</strong> — единственный безопасный способ получить доступ к командной строке. Для максимальной безопасности рекомендуется отключать вход по паролю и использовать **ключи SSH**.
+                        <strong class="text-red-300">SSH (Secure Shell)</strong> — единственный безопасный способ получить доступ к командной строке. Для максимальной безопасности рекомендуется отключать вход по паролю и использовать <strong>ключи SSH</strong>.
                     </p>
                     <div class="code-block p-2 mt-2 rounded-md">
                         <p class="text-sm text-red-300">Генерация пары SSH-ключей</p>
@@ -304,7 +303,7 @@
 
                     <h3 class="text-xl font-semibold text-white mt-4 mb-2">Сетевые интерфейсы</h3>
                     <p class="text-sm text-gray-200">
-                        Управление сетевыми картами и IP-адресами часто осуществляется через утилиты `ip` или специализированные менеджеры, такие как **Netplan** (в Ubuntu).
+                        Управление сетевыми картами и IP-адресами часто осуществляется через утилиты `ip` или специализированные менеджеры, такие как <strong>Netplan</strong> (в Ubuntu).
                     </p>
                     <div class="code-block p-2 mt-2 rounded-md">
                         <p class="text-sm text-red-300">Просмотр IP-адресов и интерфейсов</p>
@@ -315,7 +314,7 @@
                 <section id="tools" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">5. Контейнеризация и Автоматизация</h2>
                     <p class="text-gray-200 mb-4">
-                        Современный сервер немыслим без **контейнеризации** (для изоляции приложений) и **автоматизации** (для быстрого развертывания).
+                        Современный сервер немыслим без <strong>контейнеризации</strong> (для изоляции приложений) и <strong>автоматизации</strong> (для быстрого развертывания).
                     </p>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
                         <li>
@@ -326,7 +325,7 @@
                             <strong class="text-red-300">Kubernetes:</strong> Оркестратор контейнеров. Управляет кластерами, обеспечивает автоматическое масштабирование и самовосстановление сервисов в крупной инфраструктуре.
                         </li>
                         <li>
-                            <strong class="text-red-300">Ansible / Chef / Puppet:</strong> Инструменты **Configuration Management**. Позволяют описывать состояние сервера в виде кода (Infrastructure as Code) и автоматически применять конфигурации к тысячам машин.
+                            <strong class="text-red-300">Ansible / Chef / Puppet:</strong> Инструменты <strong>Configuration Management</strong>. Позволяют описывать состояние сервера в виде кода (Infrastructure as Code) и автоматически применять конфигурации к тысячам машин.
                         </li>
                     </ul>
                 </section>
@@ -338,7 +337,7 @@
                     </p>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
                         <li>
-                            <strong class="text-red-300">Firewall (Брандмауэр):</strong> Контролирует сетевой трафик. На Debian/Ubuntu часто используется **UFW**, на RHEL-подобных — **firewalld**. Политика: **Deny All by Default**.
+                            <strong class="text-red-300">Firewall (Брандмауэр):</strong> Контролирует сетевой трафик. На Debian/Ubuntu часто используется <strong>UFW</strong>, на RHEL-подобных — <strong>firewalld</strong>. Политика: <strong>Deny All by Default</strong>.
                             <div class="code-block p-2 mt-2 rounded-md"><pre>sudo ufw allow ssh</pre></div>
                         </li>
                         <li>
