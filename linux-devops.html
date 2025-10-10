@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лекция: Linux в мире облачных вычислений и DevOps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #00e0b7; /* Изменен акцент на бирюзовый */
+            --accent-dark: #00b391;
+            --accent-light: #33ffcc;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(0, 224, 183, 0.3); /* Новый акцент */
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 224, 183, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(0, 224, 183, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(0, 224, 183, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 224, 183, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link.active {
+            background-color: rgba(0, 224, 183, 0.2);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem !important;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(0, 224, 183, 0.1);
+        }
+        .nav-link.active:hover {
+            background-color: rgba(0, 224, 183, 0.3);
+        }
+        
+        .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 224, 183, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+        .code-block pre {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem;
+            overflow-x: auto;
+        }
+        .tool-btn {
+            background: rgba(0, 224, 183, 0.1);
+            border: 1px solid rgba(0, 224, 183, 0.3);
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .tool-btn:hover {
+            background: rgba(0, 224, 183, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 224, 183, 0.2);
+        }
+        .tool-btn.selected {
+            background: var(--accent) !important;
+            color: var(--darker-bg) !important;
+            box-shadow: 0 0 15px rgba(0, 224, 183, 0.5);
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-20px) translateX(10px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+        @media (max-width: 768px) {
+            .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent);
+                padding-left: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-cyan-400 pb-2">Содержание Лекции</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#intro-devops" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Роль Linux в DevOps</a></li>
+                        <li><a href="#iaas" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Linux и IaaS/PaaS</a></li>
+                        <li><a href="#containers-orchestration" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Контейнеры и K8s</a></li>
+                        <li><a href="#iac" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Инфраструктура как Код (IaC)</a></li>
+                        <li><a href="#cicd" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. CI/CD и Bash/Shell</a></li>
+                        <li><a href="#monitoring" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Мониторинг и логирование</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Linux в Облаках и <span class="text-cyan-400">DevOps</span></h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Ядро цифровой трансформации: от облака до автоматизации.</p>
+                </header>
+
+                <section id="intro-devops" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">1. Фундаментальная роль Linux в DevOps</h2>
+                    <p class="text-gray-200 mb-4">
+                        <strong class="text-cyan-300">DevOps</strong> — это не инструмент, а культура и набор практик, направленных на сокращение жизненного цикла разработки систем. В основе всего этого процесса лежит Linux благодаря его **открытости, гибкости и совместимости**.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Почему именно Linux?</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Стандартизация:</strong> Ядро Linux используется в AWS EC2, Azure VMs, Google Cloud, Docker-контейнерах и Kubernetes. Это универсальный язык облаков.</li>
+                        <li><strong>Скриптование (Shell):</strong> Командная строка — идеальный инструмент для автоматизации, являющейся сутью DevOps.</li>
+                        <li><strong>Эффективность:</strong> Минимальные образы дистрибутивов (например, Alpine) делают контейнеры легкими и быстрыми.</li>
+                    </ul>
+                </section>
+
+                <section id="iaas" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">2. Linux как IaaS/PaaS в Облачных Провайдерах</h2>
+                    <p class="text-gray-200 mb-4">
+                        В облачных моделях **IaaS (Инфраструктура как Сервис)** Linux является операционной системой по умолчанию. Все крупные провайдеры предлагают оптимизированные образы.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-200">
+                        <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/10">
+                            <h3 class="font-semibold text-cyan-300 mb-2">AMI (AWS Machine Image)</h3>
+                            <p class="text-sm">Готовые, оптимизированные образы Linux (Amazon Linux, Ubuntu) для быстрого запуска виртуальных машин EC2.</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/10">
+                            <h3 class="font-semibold text-cyan-300 mb-2">Cloud-init</h3>
+                            <p class="text-sm">Стандартный инструмент Linux для инициализации VM. Позволяет выполнить скрипты, настроить сеть, добавить ключи SSH при первом запуске.</p>
+                            <div class="code-block p-2 mt-2 rounded-md"><pre>#cloud-config
+runcmd:
+  - systemctl start myapp</pre></div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/10">
+                            <h3 class="font-semibold text-cyan-300 mb-2">Serverless Functions (FaaS)</h3>
+                            <p class="text-sm">Даже "бессерверные" функции (AWS Lambda, Azure Functions) часто выполняются в контейнерах на базе **ядра Linux**.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="containers-orchestration" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">3. Контейнеры и Kubernetes: Власть cgroups и namespaces</h2>
+                    <p class="text-gray-200 mb-4">
+                        <strong class="text-cyan-300">Контейнеризация</strong> — это краеугольный камень современного DevOps. Она работает исключительно благодаря функциям ядра Linux: **cgroups** и **namespaces**.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Docker (Контейнеризация)</h3>
+                    <p class="text-sm text-gray-200">
+                        <strong class="text-cyan-300">Docker</strong> использует возможности ядра Linux для изоляции ресурсов (CPU, RAM через **cgroups**) и видимости (файловая система, сеть через **namespaces**), создавая легкую, портативную среду.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-cyan-300">Проверка ресурсов контейнера (с помощью cgroups)</p>
+                        <pre>cat /sys/fs/cgroup/cpu/docker/&lt;container-id&gt;/cpu.cfs_quota_us</pre>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Kubernetes (Оркестрация)</h3>
+                    <p class="text-sm text-gray-200">
+                        <strong class="text-cyan-300">Kubernetes (K8s)</strong> — это система управления кластерами контейнеров. Каждый **Node** в кластере Kubernetes — это, как правило, сервер на Linux (Ubuntu, RHEL, CoreOS), а контейнеры (Pods) используют его ядро.
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200 text-sm mt-2">
+                        <li>**kubelet:** Главный агент, работающий на каждом узле Linux, который обеспечивает связь с Control Plane.</li>
+                        <li>**CoreOS / RKE / K3s:** Специализированные, минималистичные дистрибутивы Linux, разработанные специально для хостинга Kubernetes.</li>
+                    </ul>
+                </section>
+                
+                <section id="iac" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">4. Infrastructure as Code (IaC)</h2>
+                    <p class="text-gray-200 mb-4">
+                        IaC позволяет управлять инфраструктурой через файлы конфигурации, а не вручную. Linux — главная цель этих инструментов, поскольку его состояние легко описывается кодом.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые инструменты и их цели</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="ansible">Ansible</button>
+                        <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="terraform">Terraform</button>
+                        <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="puppet">Puppet/Chef</button>
+                    </div>
+                    <div id="tool-details" class="bg-gray-800/50 p-6 rounded-lg border border-cyan-400/30 hidden">
+                        <h3 id="tool-title" class="text-xl font-bold text-cyan-400 mb-2 font-mono"></h3>
+                        <p id="tool-description" class="text-gray-300"></p>
+                    </div>
+                    <div class="code-block p-2 mt-4 rounded-md">
+                        <p class="text-sm text-cyan-300">Пример модуля Ansible для установки пакета</p>
+                        <pre>- name: Install Nginx on Debian
+  apt:
+    name: nginx
+    state: latest</pre>
+                    </div>
+                </section>
+
+                <section id="cicd" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">5. CI/CD и скрипты Bash/Shell</h2>
+                    <p class="text-gray-200 mb-4">
+                        Конвейеры **CI/CD (Непрерывная Интеграция/Непрерывная Доставка)** — это автоматизированные сборочные линии. Они на 99% состоят из команд, исполняемых в Linux-среде.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Роль Bash в конвейерах</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Сборка:</strong> Выполнение команд `npm install`, `mvn package` или `go build` происходит внутри Linux-контейнера или на Linux-агенте.</li>
+                        <li><strong>Тестирование:</strong> Запуск юнит-тестов и интеграционных тестов с помощью скриптов Shell.</li>
+                        <li><strong>Деплой:</strong> Команды `scp`, `ssh` (для удаленного запуска) и `kubectl` (для K8s) — это стандартные утилиты Linux.</li>
+                    </ul>
+                    <div class="code-block p-2 mt-4 rounded-md">
+                        <p class="text-sm text-cyan-300">Пример из Jenkinsfile/GitLab CI/GitHub Actions</p>
+                        <pre>stage('Deploy') {
+  steps {
+    sh 'kubectl apply -f deployment.yaml --namespace production'
+  }
+}</pre>
+                    </div>
+                </section>
+
+                <section id="monitoring" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">6. Мониторинг, Логирование и Трассировка</h2>
+                    <p class="text-gray-200 mb-4">
+                        Для поддержания здоровья облачной инфраструктуры необходим непрерывный сбор данных. Linux предоставляет все необходимые средства.
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li>
+                            <strong class="text-cyan-300">Prometheus Node Exporter:</strong> Запущенный на каждом Linux-сервере, он собирает метрики (CPU, RAM, Disk I/O) из файлов `/proc` и `/sys` ядра.
+                        </li>
+                        <li>
+                            <strong class="text-cyan-300">Journald / Syslog:</strong> Системы сбора логов в Linux, которые интегрируются с централизованными решениями, такими как ELK (Elasticsearch, Logstash, Kibana) или Loki.
+                        </li>
+                        <li>
+                            <strong class="text-cyan-300">eBPF:</strong> Продвинутая технология ядра Linux, позволяющая безопасно запускать программы в пространстве ядра для высокопроизводительной трассировки, мониторинга и анализа безопасности.
+                        </li>
+                    </ul>
+                    <div class="code-block p-2 mt-4 rounded-md">
+                        <p class="text-sm text-cyan-300">Просмотр логов системной службы с помощью Systemd</p>
+                        <pre>journalctl -u nginx.service -f</pre>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const toolButtons = document.querySelectorAll('.tool-btn');
+            const toolDetails = document.getElementById('tool-details');
+            const toolTitle = document.getElementById('tool-title');
+            const toolDescription = document.getElementById('tool-description');
+
+            // Data for IaC tools
+            const tools = {
+                'ansible': {
+                    title: "Ansible",
+                    description: "<strong>Тип:</strong> Управление конфигурациями (CM), Agentless (без агента). <strong>Особенности:</strong> Использует SSH для подключения к Linux-хостам. Пишется на YAML (Playbooks). Низкий порог входа. <strong>Цель:</strong> Настройка ОС и установка приложений."
+                },
+                'terraform': {
+                    title: "Terraform",
+                    description: "<strong>Тип:</strong> Провизионирование (Provisioning). <strong>Особенности:</strong> Использует HCL. Управляет облачными ресурсами (AWS EC2, Azure VM) и K8s-кластерами. Создает и удаляет инфраструктуру. <strong>Цель:</strong> Развертывание базовой инфраструктуры (виртуальные машины, сети)."
+                },
+                'puppet': {
+                    title: "Puppet / Chef",
+                    description: "<strong>Тип:</strong> Управление конфигурациями (CM), Agent-based (с агентом). <strong>Особенности:</strong> Требует установки агента на Linux-сервере. Отлично подходит для крупных, сложных, высокорегулируемых корпоративных сред. <strong>Цель:</strong> Поддержание желаемого состояния конфигурации."
+                }
+            };
+
+            // Intersection Observer for Sidebar Highlighting
+            const observer = new IntersectionObserver(entries => {
+                let firstIntersecting = null;
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Priority to the one closest to the top
+                        if (!firstIntersecting || entry.boundingClientRect.top < firstIntersecting.boundingClientRect.top) {
+                             firstIntersecting = entry;
+                        }
+                    }
+                });
+
+                if (firstIntersecting) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    const activeLink = document.querySelector(`.nav-link[href="#${firstIntersecting.target.id}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            }, { rootMargin: '-30% 0px -30% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Tool Button Logic
+            toolButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    toolButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+
+                    const toolKey = button.dataset.tool;
+                    const selectedTool = tools[toolKey];
+
+                    if (selectedTool) {
+                        toolTitle.textContent = selectedTool.title;
+                        toolDescription.innerHTML = selectedTool.description; 
+                        toolDetails.classList.remove('hidden');
+                        toolDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            // Initial active link setup (for page load)
+            if (navLinks.length > 0) {
+                 navLinks[0].classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
