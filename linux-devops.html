@@ -15,13 +15,13 @@
         :root {
             --dark-bg: #0a0a0a;
             --darker-bg:#050505;
-            --accent: #00e0b7; /* Изменен акцент на бирюзовый */
-            --accent-dark: #00b391;
-            --accent-light: #33ffcc;
+            --accent: #ff2a2a; /* Возвращен красный акцент */
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
             --text: #f5f5f5;
             --text-secondary: #aaaaaa;
             --card-bg: rgba(30, 30, 30, 0.7);
-            --card-border: rgba(0, 224, 183, 0.3); /* Новый акцент */
+            --card-border: rgba(255, 42, 42, 0.3); /* Красный акцент */
             --error-red: #ff3333;
             --success-green: #33ff77;
         }
@@ -53,9 +53,9 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 224, 183, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 85% 30%, rgba(0, 224, 183, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 50% 80%, rgba(0, 224, 183, 0.1) 0%, transparent 20%);
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
             background-size: 100% 100%;
             animation: pulse 15s infinite alternate;
         }
@@ -67,7 +67,7 @@
         .circle {
             position: absolute;
             border-radius: 50%;
-            border: 1px solid rgba(0, 224, 183, 0.1);
+            border: 1px solid rgba(255, 42, 42, 0.1);
             animation: float 20s infinite linear;
         }
         .circle:nth-child(1) {
@@ -130,22 +130,22 @@
             font-family: 'JetBrains Mono', monospace;
         }
         .nav-link.active {
-            background-color: rgba(0, 224, 183, 0.2);
+            background-color: rgba(255, 42, 42, 0.2);
             color: var(--accent);
             border-left: 3px solid var(--accent);
             padding-left: 1rem !important;
         }
         .nav-link:hover {
             color: var(--accent);
-            background-color: rgba(0, 224, 183, 0.1);
+            background-color: rgba(255, 42, 42, 0.1);
         }
         .nav-link.active:hover {
-            background-color: rgba(0, 224, 183, 0.3);
+            background-color: rgba(255, 42, 42, 0.3);
         }
         
         .code-block {
             background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 224, 183, 0.1);
+            border: 1px solid rgba(255, 42, 42, 0.1);
             border-left: 4px solid var(--accent);
         }
         .code-block pre {
@@ -155,22 +155,22 @@
             overflow-x: auto;
         }
         .tool-btn {
-            background: rgba(0, 224, 183, 0.1);
-            border: 1px solid rgba(0, 224, 183, 0.3);
+            background: rgba(255, 42, 42, 0.1); /* Красный акцент */
+            border: 1px solid rgba(255, 42, 42, 0.3); /* Красный акцент */
             color: var(--accent);
             font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
             transition: all 0.3s;
         }
         .tool-btn:hover {
-            background: rgba(0, 224, 183, 0.2);
+            background: rgba(255, 42, 42, 0.2); /* Красный акцент */
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 224, 183, 0.2);
+            box-shadow: 0 4px 8px rgba(255, 42, 42, 0.2); /* Красный акцент */
         }
         .tool-btn.selected {
             background: var(--accent) !important;
-            color: var(--darker-bg) !important;
-            box-shadow: 0 0 15px rgba(0, 224, 183, 0.5);
+            color: white !important; /* Белый текст для контраста */
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.5); /* Красный акцент */
             transform: scale(1.05);
         }
 
@@ -209,149 +209,367 @@
         <div class="flex flex-col md:flex-row gap-8">
             <aside class="w-full md:w-1/4 lg:w-1/5">
                 <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
-                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-cyan-400 pb-2">Содержание Лекции</h3>
+                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-red-500 pb-2">Содержание Лекции</h3>
                     <ul class="space-y-1">
                         <li><a href="#intro-devops" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Роль Linux в DevOps</a></li>
-                        <li><a href="#iaas" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Linux и IaaS/PaaS</a></li>
-                        <li><a href="#containers-orchestration" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Контейнеры и K8s</a></li>
+                        <li><a href="#iaas" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Linux и Облачные Модели (IaaS/PaaS)</a></li>
+                        <li><a href="#containers-orchestration" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Контейнеризация и Оркестрация</a></li>
                         <li><a href="#iac" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Инфраструктура как Код (IaC)</a></li>
-                        <li><a href="#cicd" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. CI/CD и Bash/Shell</a></li>
-                        <li><a href="#monitoring" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Мониторинг и логирование</a></li>
+                        <li><a href="#cicd" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. CI/CD и Автоматизация с Bash</a></li>
+                        <li><a href="#monitoring" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Мониторинг, Логирование, Трассировка</a></li>
+                        <li><a href="#security-cloud" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">7. Безопасность Linux в Облаках</a></li>
                     </ul>
                 </nav>
             </aside>
             <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
                 <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Linux в Облаках и <span class="text-cyan-400">DevOps</span></h1>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Linux в Облаках и <span class="text-red-500">DevOps</span></h1>
                     <p class="mt-2 text-lg md:text-xl text-gray-200">Ядро цифровой трансформации: от облака до автоматизации.</p>
                 </header>
 
                 <section id="intro-devops" class="step main-content-card p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">1. Фундаментальная роль Linux в DevOps</h2>
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">1. Фундаментальная роль Linux в DevOps</h2>
                     <p class="text-gray-200 mb-4">
-                        <strong class="text-cyan-300">DevOps</strong> — это не инструмент, а культура и набор практик, направленных на сокращение жизненного цикла разработки систем. В основе всего этого процесса лежит Linux благодаря его **открытости, гибкости и совместимости**.
+                        <strong class="text-red-300">DevOps</strong> — это не просто набор инструментов, а целая философия, объединяющая разработку (Dev) и операции (Ops) для сокращения жизненного цикла разработки систем и обеспечения непрерывной доставки высококачественного ПО. В этой парадигме Linux играет ключевую, если не центральную, роль. Его открытость, гибкость, надежность и широкая поддержка сообщества сделали его де-факто стандартом для развертывания, управления и масштабирования приложений в современной инфраструктуре.
                     </p>
-                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Почему именно Linux?</h3>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Почему именно Linux стал основой DevOps?</h3>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
-                        <li><strong>Стандартизация:</strong> Ядро Linux используется в AWS EC2, Azure VMs, Google Cloud, Docker-контейнерах и Kubernetes. Это универсальный язык облаков.</li>
-                        <li><strong>Скриптование (Shell):</strong> Командная строка — идеальный инструмент для автоматизации, являющейся сутью DevOps.</li>
-                        <li><strong>Эффективность:</strong> Минимальные образы дистрибутивов (например, Alpine) делают контейнеры легкими и быстрыми.</li>
+                        <li><strong>Вездесущность и Стандартизация:</strong> Ядро Linux лежит в основе большинства облачных провайдеров (AWS, Azure, Google Cloud), всех основных систем контейнеризации (Docker, Kubernetes) и большинства суперкомпьютеров. Это обеспечивает унифицированную среду для разработки и эксплуатации.</li>
+                        <li><strong>Гибкость и Расширяемость:</strong> Linux позволяет тонко настраивать каждый аспект системы, от ядра до пользовательских утилит, что критично для оптимизации производительности и безопасности в серверных средах.</li>
+                        <li><strong>Автоматизация через CLI и Скрипты:</strong> Командная строка Linux (Bash, Shell) — это мощный инструмент для автоматизации рутинных задач, мониторинга и управления, что является ядром практик DevOps. Инструменты вроде `grep`, `awk`, `sed`, `ssh` позволяют создавать сложные автоматизированные процессы.</li>
+                        <li><strong>Эффективность Ресурсов:</strong> Серверные дистрибутивы Linux, особенно минималистичные, потребляют гораздо меньше ресурсов (CPU, RAM) по сравнению с другими ОС, что снижает операционные расходы в облаке.</li>
+                        <li><strong>Безопасность:</strong> Благодаря открытому исходному коду и активному сообществу, уязвимости в Linux быстро обнаруживаются и исправляются. Встроенные механизмы, такие как SELinux и AppArmor, предоставляют мощные средства для усиления безопасности.</li>
                     </ul>
+                    <p class="text-gray-200 mt-4">
+                        Таким образом, Linux не просто присутствует в мире DevOps и облаков, он является их фундаментом, обеспечивая необходимую стабильность, управляемость и экосистему для инноваций.
+                    </p>
                 </section>
 
                 <section id="iaas" class="step main-content-card p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">2. Linux как IaaS/PaaS в Облачных Провайдерах</h2>
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">2. Linux и Облачные Модели (IaaS/PaaS)</h2>
                     <p class="text-gray-200 mb-4">
-                        В облачных моделях **IaaS (Инфраструктура как Сервис)** Linux является операционной системой по умолчанию. Все крупные провайдеры предлагают оптимизированные образы.
+                        В основе практически любой облачной инфраструктуры, будь то публичные провайдеры (AWS, Azure, GCP) или частные облака, лежит Linux. Он предоставляет базовую вычислительную мощь и стабильность для различных моделей обслуживания.
                     </p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-200">
-                        <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/10">
-                            <h3 class="font-semibold text-cyan-300 mb-2">AMI (AWS Machine Image)</h3>
-                            <p class="text-sm">Готовые, оптимизированные образы Linux (Amazon Linux, Ubuntu) для быстрого запуска виртуальных машин EC2.</p>
-                        </div>
-                        <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/10">
-                            <h3 class="font-semibold text-cyan-300 mb-2">Cloud-init</h3>
-                            <p class="text-sm">Стандартный инструмент Linux для инициализации VM. Позволяет выполнить скрипты, настроить сеть, добавить ключи SSH при первом запуске.</p>
-                            <div class="code-block p-2 mt-2 rounded-md"><pre>#cloud-config
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">IaaS (Infrastructure as a Service - Инфраструктура как Сервис)</h3>
+                    <p class="text-gray-200 mb-4">
+                        В модели IaaS облачный провайдер предоставляет вам виртуальные машины, сети и хранилище. Вы сами управляете операционной системой. Здесь Linux является доминирующим выбором по ряду причин:
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Виртуальные Машины (VMs):</strong> Подавляющее большинство виртуальных машин, предлагаемых облачными провайдерами (например, AWS EC2 Instances, Azure Virtual Machines, Google Compute Engine), работают на Linux. Для них доступны специально оптимизированные образы (AMI в AWS, Images в Azure/GCP).
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Пример запуска EC2 инстанса (AWS CLI)</p>
+                                <pre>aws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type t2.micro --count 1 --key-name my-ssh-key</pre>
+                            </div>
+                        </li>
+                        <li><strong>Cloud-init:</strong> Это стандартный multi-distribution пакет для настройки Linux-систем при их первом запуске в облаке. Он позволяет выполнять скрипты, настраивать пользователей, сеть, устанавливать пакеты и многое другое. Это ключевой элемент автоматизации в IaaS.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Пример Cloud-init для установки Nginx</p>
+                                <pre>#cloud-config
+packages:
+  - nginx
 runcmd:
-  - systemctl start myapp</pre></div>
-                        </div>
-                        <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/10">
-                            <h3 class="font-semibold text-cyan-300 mb-2">Serverless Functions (FaaS)</h3>
-                            <p class="text-sm">Даже "бессерверные" функции (AWS Lambda, Azure Functions) часто выполняются в контейнерах на базе **ядра Linux**.</p>
-                        </div>
-                    </div>
+  - systemctl enable nginx
+  - systemctl start nginx</pre>
+                            </div>
+                        </li>
+                        <li><strong>Экономия:</strong> Отсутствие лицензионных платежей за ОС Linux значительно снижает стоимость владения (TCO) в облаке.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">PaaS (Platform as a Service - Платформа как Сервис)</h3>
+                    <p class="text-gray-200 mb-4">
+                        В PaaS провайдер управляет не только инфраструктурой, но и операционной системой, средой выполнения и базами данных, а вы фокусируетесь только на своем приложении. Даже здесь Linux играет важную, хоть и менее очевидную, роль:
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Базовая ОС для Платформ:</strong> Многие PaaS-решения (например, Heroku, Google App Engine, OpenShift) используют Linux как базовую ОС, на которой разворачиваются среды выполнения (Node.js, Python, Java) и базы данных.</li>
+                        <li><strong>Serverless (FaaS - Function as a Service):</strong> "Бессерверные" вычисления, такие как AWS Lambda, Azure Functions или Google Cloud Functions, несмотря на название, не работают без серверов. Они выполняются в изолированных средах, которые часто являются легкими контейнерами, основанными на ядре Linux.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Пример функции AWS Lambda (runtime based on Linux)</p>
+                                <pre># Python runtime, executing on a custom Linux AMI
+def lambda_handler(event, context):
+    return {
+        'statusCode': 200,
+        'body': 'Hello from Lambda on Linux!'
+    }</pre>
+                            </div>
+                        </li>
+                    </ul>
                 </section>
 
                 <section id="containers-orchestration" class="step main-content-card p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">3. Контейнеры и Kubernetes: Власть cgroups и namespaces</h2>
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">3. Контейнеризация и Оркестрация: Власть cgroups и Namespaces</h2>
                     <p class="text-gray-200 mb-4">
-                        <strong class="text-cyan-300">Контейнеризация</strong> — это краеугольный камень современного DevOps. Она работает исключительно благодаря функциям ядра Linux: **cgroups** и **namespaces**.
+                        Контейнеризация изменила способ развертывания и управления приложениями. Это стало возможным благодаря фундаментальным возможностям ядра Linux, а именно **cgroups (control groups)** и **namespaces**.
                     </p>
-                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Docker (Контейнеризация)</h3>
-                    <p class="text-sm text-gray-200">
-                        <strong class="text-cyan-300">Docker</strong> использует возможности ядра Linux для изоляции ресурсов (CPU, RAM через **cgroups**) и видимости (файловая система, сеть через **namespaces**), создавая легкую, портативную среду.
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Контейнеры (Docker)</h3>
+                    <p class="text-gray-200 mb-4">
+                        <strong class="text-red-300">Docker</strong> и другие контейнерные платформы используют низкоуровневые механизмы ядра Linux для создания изолированных, портативных сред выполнения.
                     </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Namespaces (Пространства имен):</strong> Обеспечивают изоляцию. Каждый контейнер получает свое собственное "представление" системы:
+                            <ul>
+                                <li>**PID namespace:** Изолированные процессы.</li>
+                                <li>**Network namespace:** Изолированные сетевые интерфейсы и таблицы маршрутизации.</li>
+                                <li>**Mount namespace:** Изолированная файловая система.</li>
+                                <li>**UTS namespace:** Изолированное имя хоста.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Cgroups (Control Groups):</strong> Управляют и ограничивают ресурсы, которые может потреблять группа процессов. Это позволяет Docker гарантировать, что один контейнер не "захватит" все ресурсы хоста.
+                            <ul>
+                                <li>**CPU:** Ограничение использования процессора.</li>
+                                <li>**Memory:** Ограничение оперативной памяти.</li>
+                                <li>**Block I/O:** Ограничение операций ввода/вывода на диске.</li>
+                            </ul>
+                        </li>
+                    </ul>
                     <div class="code-block p-2 mt-2 rounded-md">
-                        <p class="text-sm text-cyan-300">Проверка ресурсов контейнера (с помощью cgroups)</p>
-                        <pre>cat /sys/fs/cgroup/cpu/docker/&lt;container-id&gt;/cpu.cfs_quota_us</pre>
+                        <p class="text-sm text-red-300">Запуск Nginx в Docker-контейнере</p>
+                        <pre>docker run -d -p 80:80 --name my-web-server nginx:latest</pre>
+                        <p class="text-sm text-red-300 mt-2">Пример просмотра использования памяти контейнером через cgroups</p>
+                        <pre>cat /sys/fs/cgroup/memory/docker/&lt;container-id&gt;/memory.usage_in_bytes</pre>
                     </div>
 
-                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Kubernetes (Оркестрация)</h3>
-                    <p class="text-sm text-gray-200">
-                        <strong class="text-cyan-300">Kubernetes (K8s)</strong> — это система управления кластерами контейнеров. Каждый **Node** в кластере Kubernetes — это, как правило, сервер на Linux (Ubuntu, RHEL, CoreOS), а контейнеры (Pods) используют его ядро.
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Оркестрация Контейнеров (Kubernetes)</h3>
+                    <p class="text-gray-200 mb-4">
+                        По мере роста числа контейнеров возникает необходимость в их оркестрации. <strong class="text-red-300">Kubernetes (K8s)</strong> стал стандартом де-факто для этой задачи.
                     </p>
-                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200 text-sm mt-2">
-                        <li>**kubelet:** Главный агент, работающий на каждом узле Linux, который обеспечивает связь с Control Plane.</li>
-                        <li>**CoreOS / RKE / K3s:** Специализированные, минималистичные дистрибутивы Linux, разработанные специально для хостинга Kubernetes.</li>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Мастер-узлы и Рабочие узлы (Nodes):</strong> Кластер Kubernetes состоит из управляющих узлов (Control Plane) и рабочих узлов, на которых запускаются контейнеры. Почти все эти узлы работают под управлением Linux.</li>
+                        <li><strong>Kubelet:</strong> Основной агент, который работает на каждом рабочем узле Linux. Он отвечает за регистрацию узла в кластере, запуск подов (групп контейнеров), мониторинг их состояния и передачу информации в Control Plane.</li>
+                        <li><strong>Container Runtime Interface (CRI):</strong> Kubelet взаимодействует с контейнерным рантаймом (например, containerd или CRI-O), который, в свою очередь, использует функции ядра Linux для управления контейнерами.</li>
+                        <li><strong>Специализированные дистрибутивы Linux:</strong> Существуют минималистичные дистрибутивы, такие как **CoreOS**, **Flatcar Linux**, **RancherOS** или **K3s**, разработанные специально для хостинга Kubernetes, с упором на безопасность и автоматизированные обновления.</li>
                     </ul>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Пример развертывания Nginx в Kubernetes (kubectl)</p>
+                        <pre>kubectl apply -f https://k8s.io/examples/application/nginx-app.yaml</pre>
+                    </div>
                 </section>
                 
                 <section id="iac" class="step main-content-card p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">4. Infrastructure as Code (IaC)</h2>
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">4. Инфраструктура как Код (IaC)</h2>
                     <p class="text-gray-200 mb-4">
-                        IaC позволяет управлять инфраструктурой через файлы конфигурации, а не вручную. Linux — главная цель этих инструментов, поскольку его состояние легко описывается кодом.
+                        <strong class="text-red-300">Infrastructure as Code (IaC)</strong> — это практика управления и провизионирования инфраструктуры через файлы конфигурации, а не путем ручного управления или использования интерактивных инструментов. Это позволяет автоматизировать развертывание, улучшить консистентность и сделать инфраструктуру версионируемой, как обычный код. Linux является основной целью для большинства IaC инструментов, поскольку его состояние легко описывается и управляется кодом.
                     </p>
-                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые инструменты и их цели</h3>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Основные категории IaC инструментов:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Провизионирование (Provisioning):</strong> Создание базовых ресурсов инфраструктуры (виртуальных машин, сетей, баз данных).</li>
+                        <li><strong>Управление Конфигурациями (Configuration Management - CM):</strong> Настройка операционных систем, установка ПО, управление файлами и сервисами на уже существующих ресурсах.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые инструменты IaC:</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="ansible">Ansible</button>
                         <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="terraform">Terraform</button>
-                        <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="puppet">Puppet/Chef</button>
+                        <button class="tool-btn text-white bg-white/10 p-4 rounded-lg transition-colors" data-tool="puppet">Puppet / Chef</button>
                     </div>
-                    <div id="tool-details" class="bg-gray-800/50 p-6 rounded-lg border border-cyan-400/30 hidden">
-                        <h3 id="tool-title" class="text-xl font-bold text-cyan-400 mb-2 font-mono"></h3>
+                    <div id="tool-details" class="bg-gray-800/50 p-6 rounded-lg border border-red-500/30 hidden">
+                        <h3 id="tool-title" class="text-xl font-bold text-red-500 mb-2 font-mono"></h3>
                         <p id="tool-description" class="text-gray-300"></p>
                     </div>
-                    <div class="code-block p-2 mt-4 rounded-md">
-                        <p class="text-sm text-cyan-300">Пример модуля Ansible для установки пакета</p>
-                        <pre>- name: Install Nginx on Debian
-  apt:
-    name: nginx
-    state: latest</pre>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Примеры использования с Linux:</h3>
+                    <div class="grid grid-cols-1 gap-6 text-gray-200">
+                        <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
+                            <h4 class="font-semibold text-red-300 mb-2">Terraform (провизионирование VM на AWS)</h4>
+                            <p class="text-sm">Terraform описывает желаемое состояние инфраструктуры. Для создания виртуальной машины Linux он взаимодействует с API облачного провайдера.</p>
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <pre>resource "aws_instance" "web_server" {
+  ami           = "ami-0abcdef1234567890" # ID образа Linux (например, Ubuntu)
+  instance_type = "t2.micro"
+  tags = {
+    Name = "HelloWorldServer"
+  }
+}</pre>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-lg border border-red-500/10">
+                            <h4 class="font-semibold text-red-300 mb-2">Ansible (настройка Nginx на Linux-сервере)</h4>
+                            <p class="text-sm">Ansible использует SSH для подключения к удаленным Linux-машинам и выполняет команды для их настройки. Он декларативен и не требует агентов.</p>
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <pre>- name: Install and Configure Nginx
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Ensure Nginx is installed
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+    - name: Ensure Nginx is running and enabled
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+        enabled: yes</pre>
+                            </div>
+                        </div>
                     </div>
+                    <p class="text-gray-200 mt-4">
+                        Сочетание этих инструментов позволяет полностью автоматизировать жизненный цикл инфраструктуры на базе Linux, от создания до настройки и масштабирования, обеспечивая повторяемость и сокращая ошибки.
+                    </p>
                 </section>
 
                 <section id="cicd" class="step main-content-card p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">5. CI/CD и скрипты Bash/Shell</h2>
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">5. CI/CD и Автоматизация с Bash/Shell</h2>
                     <p class="text-gray-200 mb-4">
-                        Конвейеры **CI/CD (Непрерывная Интеграция/Непрерывная Доставка)** — это автоматизированные сборочные линии. Они на 99% состоят из команд, исполняемых в Linux-среде.
+                        <strong class="text-red-300">CI/CD (Continuous Integration / Continuous Delivery/Deployment)</strong> — это сердце современного DevOps. Это автоматизированные конвейеры (pipelines), которые непрерывно собирают, тестируют и развертывают код. Практически каждый этап в этих конвейерах выполняется в Linux-среде, а основным языком автоматизации является Bash или другие Shell-скрипты.
                     </p>
-                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Роль Bash в конвейерах</h3>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Роль Bash и утилит Linux в CI/CD:</h3>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
-                        <li><strong>Сборка:</strong> Выполнение команд `npm install`, `mvn package` или `go build` происходит внутри Linux-контейнера или на Linux-агенте.</li>
-                        <li><strong>Тестирование:</strong> Запуск юнит-тестов и интеграционных тестов с помощью скриптов Shell.</li>
-                        <li><strong>Деплой:</strong> Команды `scp`, `ssh` (для удаленного запуска) и `kubectl` (для K8s) — это стандартные утилиты Linux.</li>
+                        <li><strong>Среда Выполнения:</strong> Большинство CI/CD-агентов (Jenkins agents, GitLab Runners, GitHub Actions runners) работают на Linux-машинах или в Linux-контейнерах. Это обеспечивает консистентность среды выполнения.</li>
+                        <li><strong>Сборка (Build):</strong> На этом этапе компилируется исходный код, собираются артефакты. Команды для сборки (например, `mvn package` для Java, `npm install && npm run build` для Node.js, `go build` для Go) выполняются в Shell.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Пример шага сборки в GitLab CI</p>
+                                <pre>build_job:
+  image: node:16-alpine # Linux-образ
+  stage: build
+  script:
+    - npm install
+    - npm run build</pre>
+                            </div>
+                        </li>
+                        <li><strong>Тестирование (Test):</strong> Запуск юнит-тестов, интеграционных тестов, линтеров. Все эти команды также выполняются через Bash-скрипты.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Пример шага тестирования в GitHub Actions</p>
+                                <pre>test_job:
+  runs-on: ubuntu-latest # Виртуальная машина Ubuntu Linux
+  steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
+      run: npm test</pre>
+                            </div>
+                        </li>
+                        <li><strong>Контейнеризация и Публикация Образов:</strong> Сборка Docker-образов, их пометка и отправка в реестр (Docker Hub, AWS ECR) также осуществляется с помощью CLI-инструментов, доступных в Linux.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Сборка и пуш Docker-образа</p>
+                                <pre>docker build -t my-app:latest .
+docker push my-app:latest</pre>
+                            </div>
+                        </li>
+                        <li><strong>Развертывание (Deployment):</strong> Команды для развертывания приложений в облаке или на Kubernetes-кластере являются стандартными Linux-утилитами: `ssh`, `scp`, `kubectl`, `aws cli`, `az cli`, `gcloud cli`.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Деплой в Kubernetes с использованием `kubectl`</p>
+                                <pre>deploy_job:
+  image: alpine/git # Легкий Linux-образ
+  stage: deploy
+  script:
+    - apk add --no-cache kubectl # Установка kubectl
+    - kubectl config use-context my-k8s-cluster
+    - kubectl apply -f kubernetes/deployment.yaml</pre>
+                            </div>
+                        </li>
+                        <li><strong>Управление файлами и конфигурациями:</strong> Утилиты `grep`, `sed`, `awk`, `jq` (для JSON) активно используются для парсинга логов, модификации конфигурационных файлов "на лету" и извлечения нужных данных в процессе CI/CD.</li>
                     </ul>
-                    <div class="code-block p-2 mt-4 rounded-md">
-                        <p class="text-sm text-cyan-300">Пример из Jenkinsfile/GitLab CI/GitHub Actions</p>
-                        <pre>stage('Deploy') {
-  steps {
-    sh 'kubectl apply -f deployment.yaml --namespace production'
-  }
-}</pre>
-                    </div>
+                    <p class="text-gray-200 mt-4">
+                        Таким образом, знание Bash и основ администрирования Linux является незаменимым навыком для любого специалиста DevOps, позволяя эффективно создавать, отлаживать и поддерживать конвейеры CI/CD.
+                    </p>
                 </section>
 
                 <section id="monitoring" class="step main-content-card p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-cyan-400 mb-4 font-mono">6. Мониторинг, Логирование и Трассировка</h2>
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">6. Мониторинг, Логирование и Трассировка</h2>
                     <p class="text-gray-200 mb-4">
-                        Для поддержания здоровья облачной инфраструктуры необходим непрерывный сбор данных. Linux предоставляет все необходимые средства.
+                        В мире DevOps и облачных вычислений крайне важно знать, что происходит с вашими приложениями и инфраструктурой. <strong class="text-red-300">Мониторинг, логирование и трассировка</strong> — это три столпа наблюдаемости (observability), и Linux предоставляет базовые инструменты для сбора этих данных, которые затем агрегируются и анализируются специализированными системами.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Мониторинг Метрик:</h3>
+                    <p class="text-gray-200 mb-4">
+                        Метрики — это числовые данные о производительности и использовании ресурсов. Linux предоставляет богатый источник метрик через псевдофайловые системы `/proc` и `/sys`.
                     </p>
                     <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
-                        <li>
-                            <strong class="text-cyan-300">Prometheus Node Exporter:</strong> Запущенный на каждом Linux-сервере, он собирает метрики (CPU, RAM, Disk I/O) из файлов `/proc` и `/sys` ядра.
+                        <li><strong>Prometheus Node Exporter:</strong> Это стандартный инструмент для сбора метрик с Linux-хостов. Он запускается на каждой машине и предоставляет HTTP-эндпоинт с данными о:
+                            <ul>
+                                <li><strong>CPU:</strong> Использование, idle, system, user.</li>
+                                <li><strong>Memory:</strong> Общая, свободная, использованная, кэшированная.</li>
+                                <li><strong>Disk I/O:</strong> Скорость чтения/записи, количество операций.</li>
+                                <li><strong>Network:</strong> Трафик на интерфейсах, количество ошибок.</li>
+                                <li><strong>Load Average:</strong> Средняя загрузка системы.</li>
+                            </ul>
+                            Эти метрики затем скрапируются сервером Prometheus и визуализируются в Grafana.
                         </li>
-                        <li>
-                            <strong class="text-cyan-300">Journald / Syslog:</strong> Системы сбора логов в Linux, которые интегрируются с централизованными решениями, такими как ELK (Elasticsearch, Logstash, Kibana) или Loki.
-                        </li>
-                        <li>
-                            <strong class="text-cyan-300">eBPF:</strong> Продвинутая технология ядра Linux, позволяющая безопасно запускать программы в пространстве ядра для высокопроизводительной трассировки, мониторинга и анализа безопасности.
+                        <li><strong>Системные утилиты:</strong> `top`, `htop`, `free -h`, `df -h`, `iostat`, `netstat`/`ss` предоставляют моментальные снимки состояния системы, незаменимые для быстрой диагностики.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Просмотр активных сетевых соединений</p>
+                                <pre>ss -tunap</pre>
+                            </div>
                         </li>
                     </ul>
-                    <div class="code-block p-2 mt-4 rounded-md">
-                        <p class="text-sm text-cyan-300">Просмотр логов системной службы с помощью Systemd</p>
-                        <pre>journalctl -u nginx.service -f</pre>
-                    </div>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Логирование:</h3>
+                    <p class="text-gray-200 mb-4">
+                        Логи — это текстовые записи о событиях, происходящих в системе и приложениях. Они критически важны для отладки и аудита.
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Systemd Journald / Syslog:</strong> Это стандартные подсистемы логирования в Linux. Все системные службы и приложения по умолчанию отправляют свои логи сюда.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Просмотр логов сервиса Docker</p>
+                                <pre>journalctl -u docker.service -f</pre>
+                            </div>
+                        </li>
+                        <li><strong>Log Shippers:</strong> Инструменты, такие как Filebeat, Fluentd, Promtail, разворачиваются на Linux-серверах для сбора логов из файлов или Journald и отправки их в централизованные системы логирования (ELK Stack, Loki, Splunk).</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Трассировка (Tracing):</h3>
+                    <p class="text-gray-200 mb-4">
+                        Трассировка позволяет отслеживать путь запроса через распределенную систему, выявляя узкие места и задержки. Хотя трассировка в основном реализуется на уровне приложений, Linux ядро играет роль в инструментах, которые могут "заглядывать" глубоко в системные вызовы.
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>eBPF (Extended Berkeley Packet Filter):</strong> Это мощная и безопасная технология ядра Linux, позволяющая запускать пользовательские программы в пространстве ядра без модификации кода ядра. eBPF используется для:
+                            <ul>
+                                <li>Высокопроизводительного мониторинга сети и системных вызовов.</li>
+                                <li>Динамической трассировки производительности приложений и ядра.</li>
+                                <li>Анализа безопасности и обнаружения аномалий.</li>
+                            </ul>
+                            Инструменты, такие как Cilium (для сетевых политик в K8s) и Falco (для безопасности), активно используют eBPF.
+                        </li>
+                    </ul>
+                    <p class="text-gray-200 mt-4">
+                        В совокупности эти средства мониторинга, логирования и трассировки, опирающиеся на возможности Linux, дают DevOps-командам полное представление о состоянии их инфраструктуры и приложений, позволяя быстро реагировать на инциденты и оптимизировать производительность.
+                    </p>
+                </section>
+
+                <section id="security-cloud" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">7. Безопасность Linux в Облачных Средах</h2>
+                    <p class="text-gray-200 mb-4">
+                        Безопасность — это непрерывный процесс, особенно в динамичных облачных и DevOps-средах. Linux предоставляет мощные встроенные механизмы, которые являются основой для построения многоуровневой защиты.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Сетевая Безопасность (Firewall):</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>Iptables / Nftables:</strong> Фундаментальный брандмауэр ядра Linux. Позволяет создавать сложные правила для фильтрации входящего и исходящего трафика, NAT, и многого другого.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Пример правила iptables: разрешить SSH</p>
+                                <pre>sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT</pre>
+                            </div>
+                        </li>
+                        <li><strong>UFW (Uncomplicated Firewall) / Firewalld:</strong> Высокоуровневые оболочки для `iptables`/`nftables`, которые значительно упрощают управление брандмауэром. UFW популярен в Ubuntu, Firewalld — в RHEL-подобных дистрибутивах.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Разрешить HTTP-трафик с UFW</p>
+                                <pre>sudo ufw allow 'Apache Full'</pre>
+                            </div>
+                        </li>
+                        <li><strong>Облачные Сетевые Экраны (Security Groups / Network Security Groups):</strong> В облачных провайдерах часто используются свои собственные механизмы сетевой фильтрации на уровне гипервизора, но брандмауэр на самой VM Linux остается важным дополнительным слоем защиты.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Принудительный Контроль Доступа (MAC):</h3>
+                    <p class="text-gray-200 mb-4">
+                        Традиционная модель безопасности Linux (DAC - Discretionary Access Control) основана на правах пользователя. MAC добавляет более строгий, централизованный контроль.
+                    </p>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>SELinux (Security-Enhanced Linux):</strong> Мощная система MAC, встроенная в ядро. Она определяет жесткие политики для каждого процесса и файла, ограничивая, что может делать программа, даже если она запущена от имени root. Широко используется в RHEL/CentOS/Fedora.
+                            <div class="code-block p-2 mt-2 rounded-md">
+                                <p class="text-sm text-red-300">Проверка статуса SELinux</p>
+                                <pre>sestatus</pre>
+                            </div>
+                        </li>
+                        <li><strong>AppArmor:</strong> Альтернативная система MAC, часто используемая в Debian/Ubuntu. Работает на основе профилей, которые описывают, к каким ресурсам (файлам, сети) может получить доступ программа.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Другие аспекты безопасности:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>SSH Hardening:</strong> Отключение входа по паролю, использование SSH-ключей, ограничение root-доступа, изменение порта SSH — стандартные практики безопасности для Linux-серверов.</li>
+                        <li><strong>Fail2Ban:</strong> Сканирует логи на предмет повторяющихся неудачных попыток входа (SSH, HTTP) и автоматически блокирует IP-адреса злоумышленников, используя `iptables`.</li>
+                        <li><strong>Менеджеры Пакетов:</strong> Регулярное обновление системы через `apt upgrade`, `dnf update` критически важно для получения патчей безопасности.</li>
+                        <li><strong>CIS Benchmarks:</strong> Существуют стандартизированные наборы рекомендаций (например, CIS Benchmark for Ubuntu Linux) для безопасной настройки Linux-систем.</li>
+                        <li><strong>Hardening для контейнеров:</strong> Использование минималистичных базовых образов (Alpine), ограничение привилегий (`--cap-drop=all`), запуск контейнеров от непривилегированных пользователей.</li>
+                    </ul>
+                    <p class="text-gray-200 mt-4">
+                        В контексте облаков, где постоянно меняется топология и запускаются новые сервисы, интеграция этих Linux-специфичных механизмов с облачными инструментами безопасности (IAM, WAF, Security Hub) создает надежную и масштабируемую систему защиты.
+                    </p>
                 </section>
             </main>
         </div>
@@ -370,15 +588,15 @@ runcmd:
             const tools = {
                 'ansible': {
                     title: "Ansible",
-                    description: "<strong>Тип:</strong> Управление конфигурациями (CM), Agentless (без агента). <strong>Особенности:</strong> Использует SSH для подключения к Linux-хостам. Пишется на YAML (Playbooks). Низкий порог входа. <strong>Цель:</strong> Настройка ОС и установка приложений."
+                    description: "<strong>Тип:</strong> Управление конфигурациями (Configuration Management), оркестрация. <strong>Модель:</strong> <strong class='text-red-300'>Agentless</strong> (без агента) — работает через SSH. <strong>Язык:</strong> YAML (Playbooks). <strong>Применение:</strong> Настройка ОС, установка ПО, оркестрация множества серверов. <strong>Преимущества:</strong> Простой синтаксис, низкий порог входа, широкое сообщество. Идеально для автоматизации рутинных задач на Linux-серверах."
                 },
                 'terraform': {
                     title: "Terraform",
-                    description: "<strong>Тип:</strong> Провизионирование (Provisioning). <strong>Особенности:</strong> Использует HCL. Управляет облачными ресурсами (AWS EC2, Azure VM) и K8s-кластерами. Создает и удаляет инфраструктуру. <strong>Цель:</strong> Развертывание базовой инфраструктуры (виртуальные машины, сети)."
+                    description: "<strong>Тип:</strong> Провизионирование инфраструктуры (Infrastructure Provisioning). <strong>Модель:</strong> <strong class='text-red-300'>Декларативная</strong> — описывает желаемое состояние инфраструктуры. <strong>Язык:</strong> HCL (HashiCorp Configuration Language). <strong>Применение:</strong> Создание, изменение и удаление облачных ресурсов (VM, сети, базы данных) у различных провайдеров (AWS, Azure, GCP), а также управление кластерами Kubernetes. <strong>Преимущества:</strong> Поддержка мульти-облачности, планирование изменений перед применением."
                 },
                 'puppet': {
                     title: "Puppet / Chef",
-                    description: "<strong>Тип:</strong> Управление конфигурациями (CM), Agent-based (с агентом). <strong>Особенности:</strong> Требует установки агента на Linux-сервере. Отлично подходит для крупных, сложных, высокорегулируемых корпоративных сред. <strong>Цель:</strong> Поддержание желаемого состояния конфигурации."
+                    description: "<strong>Тип:</strong> Управление конфигурациями (Configuration Management). <strong>Модель:</strong> <strong class='text-red-300'>Agent-based</strong> (требует установки агента) и декларативная. <strong>Язык:</strong> Puppet DSL / Ruby DSL. <strong>Применение:</strong> Поддержание желаемого состояния конфигурации на тысячах серверов, автоматизация сложных корпоративных сред. <strong>Преимущества:</strong> Мощная масштабируемость, детальный контроль, развитая экосистема модулей. Часто используется в крупных, высокорегулируемых компаниях."
                 }
             };
 
