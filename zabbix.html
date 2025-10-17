@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практика: Установка Zabbix Server</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link.active {
+            background-color: rgba(255, 42, 42, 0.2);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem !important;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        .nav-link.active:hover {
+            background-color: rgba(255, 42, 42, 0.3);
+        }
+        
+        .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+        .code-block pre {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.25; /* Уменьшено для лучшей читаемости кода */
+        }
+        .step-header {
+            background-color: rgba(255, 42, 42, 0.15);
+            border-left: 5px solid var(--accent);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        .step-header h3 {
+            font-weight: 700;
+            color: var(--accent-light);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box {
+            background-color: rgba(40, 40, 40, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ff9900; /* Желтый для важной информации */
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent);
+                padding-left: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-red-500 pb-2">Этапы Установки</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#prep" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Подготовка и Репозиторий</a></li>
+                        <li><a href="#db" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Настройка PostgreSQL</a></li>
+                        <li><a href="#server" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Установка Zabbix Server</a></li>
+                        <li><a href="#frontend" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Веб-Интерфейс (Frontend)</a></li>
+                        <li><a href="#nginx" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. Конфигурация Nginx и PHP</a></li>
+                        <li><a href="#agent" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Проверка и Агент</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Практикум: Развертывание <span class="text-red-500">Zabbix Server</span></h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Мониторинг Enterprise-уровня на Ubuntu с PostgreSQL и Nginx.</p>
+                </header>
+
+                <div class="info-box p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-[#ff9900] mb-2 font-mono">⚠️ Платформа</h3>
+                    <p class="text-gray-200">
+                        Все команды выполняются на чистой установке **Ubuntu Server LTS** с правами <strong class="text-red-300">root</strong> или через <strong class="text-red-300">sudo</strong>. Используем последнюю стабильную версию Zabbix (например, 6.4 или 7.0).
+                    </p>
+                </div>
+
+                <section id="prep" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">1. Подготовка Системы и Репозиторий</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Сначала обновим систему и установим официальный репозиторий Zabbix, который содержит все необходимые пакеты.
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1">Обновите локальные пакеты:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo apt update && sudo apt upgrade -y</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Загрузите и установите пакет репозитория Zabbix (замените `6.4` на актуальную версию, если требуется):</p>
+                            <div class="code-block p-2 rounded-md"><pre>wget https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.4-1+ubuntu22.04_all.deb
+sudo dpkg -i zabbix-release_6.4-1+ubuntu22.04_all.deb
+sudo apt update</pre></div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="db" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">2. Настройка PostgreSQL (База данных)</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        PostgreSQL считается более производительной и надежной базой для Zabbix, чем MySQL/MariaDB.
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1">Установите PostgreSQL:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo apt install postgresql</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Создайте базу данных и пользователя Zabbix. Это критически важный шаг для безопасности:</p>
+                            <div class="code-block p-2 rounded-md">
+                                <pre>sudo -u postgres createuser --pwprompt zabbix
+# Введите надежный пароль (например, ZabbixPass2025!)
+
+sudo -u postgres createdb -O zabbix zabbix</pre>
+                            </div>
+                            <p class="text-sm text-red-300 mt-1">Обязательно запомните пароль!</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="server" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">3. Установка Zabbix Server и Загрузка Схемы</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Устанавливаем серверный пакет Zabbix с поддержкой PostgreSQL и импортируем начальную схему базы данных.
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1">Установите Zabbix Server и PostgreSQL Connector:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo apt install zabbix-server-pgsql zabbix-frontend-php php8.1-pgsql</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Импортируйте начальную схему и данные в базу Zabbix. **Введите пароль, созданный на Шаге 2**:</p>
+                            <div class="code-block p-2 rounded-md"><pre>zcat /usr/share/doc/zabbix-server-pgsql*/create.sql.gz | sudo -u zabbix psql zabbix</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Отредактируйте конфигурационный файл Zabbix Server для подключения к БД:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo nano /etc/zabbix/zabbix_server.conf</pre></div>
+                            <p class="text-sm text-red-300 mt-1">Найдите и раскомментируйте/измените следующие строки, используя ваш пароль:</p>
+                            <div class="code-block p-2 rounded-md"><pre>DBHost=localhost
+DBName=zabbix
+DBUser=zabbix
+DBPassword=ZabbixPass2025!</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Запустите сервер Zabbix и добавьте его в автозагрузку:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo systemctl restart zabbix-server
+sudo systemctl enable zabbix-server</pre></div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="frontend" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">4. Установка Веб-Интерфейса (Frontend)</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Фронтенд Zabbix написан на PHP и требует установки соответствующих пакетов и настройки.
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1">Установите дополнительные пакеты PHP для Nginx и Zabbix Frontend:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo apt install php-fpm nginx</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Убедитесь, что временная зона правильно настроена в файле конфигурации PHP для Zabbix:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo nano /etc/zabbix/nginx.conf</pre></div>
+                            <p class="text-sm text-red-300 mt-1">Измените строку `php_value date.timezone` на вашу зону (например, `Asia/Bishkek` или `Europe/Moscow`):</p>
+                            <div class="code-block p-2 rounded-md"><pre>listen 80;
+server_name example.com; # Можно заменить на IP или домен
+...
+    # Установите вашу временную зону
+    php_value date.timezone Asia/Bishkek</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Создайте символическую ссылку на файл конфигурации Nginx Zabbix (для Ubuntu 22.04/20.04):</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo ln -s /etc/zabbix/nginx.conf /etc/nginx/sites-enabled/zabbix.conf</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Удалите стандартный конфигурационный файл Nginx, чтобы избежать конфликтов:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo rm /etc/nginx/sites-enabled/default</pre></div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="nginx" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">5. Финальная Конфигурация Nginx и Запуск</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Проверяем синтаксис Nginx и перезапускаем службы. Ваш Zabbix-сервер почти готов!
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1">Проверьте конфигурацию Nginx на ошибки:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo nginx -t</pre></div>
+                            <p class="text-sm text-success-green mt-1">Должно вывести `syntax is ok` и `test is successful`.</p>
+                        </li>
+                        <li>
+                            <p class="mb-1">Перезапустите службы Nginx и PHP-FPM:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo systemctl restart nginx php8.1-fpm
+sudo systemctl enable nginx php8.1-fpm</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">**Доступ к интерфейсу:** Откройте браузер и перейдите по IP-адресу или доменному имени вашего сервера (например, `http://192.168.1.100`). Вы увидите приветственный экран Zabbix.
+                            </p>
+                        </li>
+                        <li>
+                            <p class="mb-1">Пройдите веб-установщик:
+                                <ul class="list-disc list-outside ml-6 text-gray-200 mt-2">
+                                    <li>Проверьте, что все зависимости `OK`.</li>
+                                    <li>На шаге **Configure DB connection** введите данные: `Database type: PostgreSQL`, `User: zabbix`, `Password: ZabbixPass2025!`.</li>
+                                    <li>Финальный шаг — войдите в систему с логином: <strong class="text-red-300">Admin</strong> и паролем: <strong class="text-red-300">zabbix</strong>.</li>
+                                </ul>
+                            </p>
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="agent" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">6. Установка Zabbix Agent (Мониторинг самого сервера)</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Чтобы Zabbix мог мониторить себя, нужно установить и настроить локальный агент.
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1">Установите пакет Zabbix Agent:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo apt install zabbix-agent</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Отредактируйте конфигурационный файл агента:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo nano /etc/zabbix/zabbix_agentd.conf</pre></div>
+                            <p class="text-sm text-red-300 mt-1">Измените следующие строки, указав IP вашего Zabbix Server (в данном случае — `localhost` или его IP, если агент стоит на другом хосте):</p>
+                            <div class="code-block p-2 rounded-md"><pre>Server=127.0.0.1
+ServerActive=127.0.0.1
+Hostname=ZabbixServerHost</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">Перезапустите агент:</p>
+                            <div class="code-block p-2 rounded-md"><pre>sudo systemctl restart zabbix-agent
+sudo systemctl enable zabbix-agent</pre></div>
+                        </li>
+                        <li>
+                            <p class="mb-1">**Финальный шаг в интерфейсе:** В веб-интерфейсе Zabbix добавьте новый Хост (`Configuration -> Hosts`), указав `Hostname` (`ZabbixServerHost`) и IP `127.0.0.1`. Примените шаблон **Linux by Zabbix Agent**. Через минуту вы увидите зеленую иконку доступности. 🚀</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <div class="info-box p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-[#ff9900] mb-2 font-mono">⚠️ Важные замечания по безопасности</h3>
+                    <p class="text-gray-200">
+                        После успешной установки немедленно **смените стандартный пароль** (`Admin`/`zabbix`) и настройте **брандмауэр** (`ufw`), разрешив только порты 80/443 (Nginx), 10051 (Zabbix Server) и 10050 (Zabbix Agent).
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md"><pre>sudo ufw allow 80/tcp
+sudo ufw allow 10051/tcp
+sudo ufw enable</pre></div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const activateNavLink = (id) => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === id) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(entries => {
+                let activeEntry = null;
+                // Ищем наиболее просматриваемую секцию
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                         // Проверяем, что секция находится выше других в зоне видимости
+                        if (!activeEntry || entry.boundingClientRect.top < activeEntry.boundingClientRect.top) {
+                            activeEntry = entry;
+                        }
+                    }
+                });
+
+                if (activeEntry) {
+                    activateNavLink(activeEntry.target.id);
+                }
+
+            }, { rootMargin: '-30% 0px -30% 0px', threshold: 0.5 }); 
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        activateNavLink(targetId);
+                        
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 30,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            if (sections.length > 0) {
+                activateNavLink(sections[0].id);
+            }
+        });
+    </script>
+</body>
+</html>
