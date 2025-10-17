@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лекция: Разработка ПО в Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-duration: 25s;
+        }
+        .circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+        .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 30s;
+            animation-delay: 1s;
+        }
+        .circle:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 20%;
+            animation-duration: 15s;
+            animation-delay: 3s;
+        }
+        .circle:nth-child(5) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            right: -125px;
+            animation-duration: 35s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link.active {
+            background-color: rgba(255, 42, 42, 0.2);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem !important;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        .nav-link.active:hover {
+            background-color: rgba(255, 42, 42, 0.3);
+        }
+        
+        .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+        .code-block pre {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap; /* Добавлено для лучшего отображения кода */
+            word-break: break-all;
+        }
+        .tool-box {
+            background-color: rgba(255, 42, 42, 0.1);
+            border-left: 3px solid var(--accent);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent);
+                padding-left: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-red-500 pb-2">Содержание Лекции</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#intro" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Философия и Инструментарий</a></li>
+                        <li><a href="#build" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Сборка и Линковка</a></li>
+                        <li><a href="#dependencies" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Управление Зависимостями</a></li>
+                        <li><a href="#debug" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Отладка и Анализ</a></li>
+                        <li><a href="#ci-cd" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. CI/CD и Контейнеры</a></li>
+                        <li><a href="#packaging" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">6. Упаковка для дистрибуции</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Разработка ПО в Linux: От <span class="text-red-500">Кода</span> до Релиза</h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Полный цикл разработки в среде, где всё — файл.</p>
+                </header>
+
+                <section id="intro" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">1. Философия и Инструментарий</h2>
+                    <p class="text-gray-200 mb-4">
+                        <strong class="text-red-300">Философия UNIX</strong> — это основа разработки в Linux: делайте одну вещь, и делайте её хорошо. Это привело к созданию экосистемы небольших, но мощных утилит, которые легко комбинируются.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Базовый набор разработчика:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-200">
+                        <div class="p-4 tool-box rounded-lg">
+                            <h4 class="font-semibold text-red-300 mb-1">GCC / Clang</h4>
+                            <p class="text-sm">Основной компиляторный стек для C/C++. Ядро Linux и большинство системного ПО собрано именно им.
+                                <div class="code-block p-1 mt-1 rounded-md"><pre>gcc -o myapp myapp.c</pre></div>
+                            </p>
+                        </div>
+                        <div class="p-4 tool-box rounded-lg">
+                            <h4 class="font-semibold text-red-300 mb-1">GNU Make</h4>
+                            <p class="text-sm">Классический инструмент для автоматизации сборки. Управляет зависимостями и порядком компиляции файлов.
+                                <div class="code-block p-1 mt-1 rounded-md"><pre>make install</pre></div>
+                            </p>
+                        </div>
+                        <div class="p-4 tool-box rounded-lg">
+                            <h4 class="font-semibold text-red-300 mb-1">Git</h4>
+                            <p class="text-sm">Стандарт де-факто для контроля версий. Разработка в Linux тесно связана с распределенной моделью Git.
+                            </p>
+                        </div>
+                        <div class="p-4 tool-box rounded-lg">
+                            <h4 class="font-semibold text-red-300 mb-1">Vim / Emacs / VS Code</h4>
+                            <p class="text-sm">Текстовые редакторы и IDE. В серверной среде часто используются консольные <strong class="text-red-300">Vim</strong> и <strong class="text-red-300">Nano</strong> для быстрого редактирования.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="build" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">2. Сборка и Линковка</h2>
+                    <p class="text-gray-200 mb-4">
+                        Современные проекты на C/C++ часто используют более продвинутые системы сборки, чем чистый Make, которые упрощают кросс-платформенную разработку и управление сложными проектами.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Системы автоматической сборки:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>CMake:</strong> Мета-система сборки. Генерирует файлы сборки (например, Makefiles или проекты для IDE) из кросс-платформенных конфигурационных файлов. <strong class="text-red-300">Стандарт для крупных проектов.</strong></li>
+                        <li><strong>Autotools (Configure/Make):</strong> Старый, но все еще распространенный набор утилит для конфигурации и сборки. <strong class="text-red-300">Определяет возможности системы перед компиляцией.</strong></li>
+                        <li><strong>Cargo (Rust), npm/yarn (Node.js):</strong> Встроенные менеджеры сборки и зависимостей для конкретных языков, которые сильно упрощают процесс.</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Динамическая линковка (Shared Libraries)</h3>
+                    <p class="text-sm text-gray-200">
+                        Большинство программ в Linux используют <strong>динамические библиотеки</strong> (`.so`), которые загружаются в память один раз и используются множеством программ, экономя место и память.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Просмотр динамических зависимостей исполняемого файла</p>
+                        <pre>ldd /usr/bin/nginx</pre>
+                    </div>
+                </section>
+
+                <section id="dependencies" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">3. Управление Зависимостями</h2>
+                    <p class="text-gray-200 mb-4">
+                        В отличие от других ОС, где зависимости часто включаются в саму программу, в Linux используется <strong class="text-red-300">системный менеджер пакетов</strong> для управления библиотеками.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Системные менеджеры пакетов:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>APT (Debian/Ubuntu):</strong> Самый распространенный инструмент. Управляет пакетами `.deb`. Позволяет легко устанавливать библиотеки и инструменты разработки.</li>
+                        <li><strong>DNF/YUM (RHEL/Fedora):</strong> Управляет пакетами `.rpm`. Использует репозитории для обеспечения целостности.</li>
+                        <li><strong>Pacman (Arch):</strong> Быстрый и минималистичный менеджер.</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Пример установки DEV-пакетов:</h3>
+                    <p class="text-sm text-gray-200">
+                        Для компиляции приложения, которому нужен OpenSSL, необходим не только сам OpenSSL, но и его <strong class="text-red-300">заголовочные файлы и статические библиотеки</strong>.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Установка dev-пакета OpenSSL в Debian/Ubuntu</p>
+                        <pre>sudo apt install libssl-dev</pre>
+                    </div>
+                </section>
+                
+                <section id="debug" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">4. Отладка и Анализ (Troubleshooting)</h2>
+                    <p class="text-gray-200 mb-4">
+                        Мощные консольные инструменты позволяют разработчику глубоко анализировать поведение программы и системы.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Ключевые утилиты:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>GDB (GNU Debugger):</strong> Полнофункциональный отладчик командной строки. Позволяет ставить брейкпоинты, пошагово исполнять код и просматривать память. <strong class="text-red-300">Необходим для низкоуровневого анализа.</strong></li>
+                        <li><strong>Valgrind:</strong> Набор инструментов для анализа памяти, включая поиск утечек и ошибок обращения к памяти. <strong class="text-red-300">Критически важен для C/C++ разработки.</strong></li>
+                        <li><strong>strace:</strong> Показывает все системные вызовы (syscalls) и сигналы, которые использует процесс. Помогает понять, почему приложение не может получить доступ к файлу или сети.</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Использование strace:</h3>
+                    <p class="text-sm text-gray-200">
+                        Если программа падает с ошибкой сегментации или не может открыть файл, `strace` — ваш первый помощник.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Трассировка системных вызовов процесса</p>
+                        <pre>strace ./my_problematic_app</pre>
+                    </div>
+                </section>
+
+                <section id="ci-cd" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">5. CI/CD и Контейнеризация</h2>
+                    <p class="text-gray-200 mb-4">
+                        Вся современная DevOps-практика строится вокруг Linux. <strong class="text-red-300">Docker</strong> и <strong class="text-red-300">Kubernetes</strong> используют возможности ядра Linux (cgroups, namespaces) для изоляции.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Конвейеры CI/CD:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>CI (Continuous Integration):</strong> Автоматическая сборка и тестирование кода при каждом коммите. Инструменты: Jenkins, GitLab CI, GitHub Actions.</li>
+                        <li><strong>CD (Continuous Deployment):</strong> Автоматическое развертывание собранного артефакта на сервер.</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Docker: Изоляция и Воспроизводимость</h3>
+                    <p class="text-sm text-gray-200">
+                        Docker-контейнер гарантирует, что ваше приложение будет работать одинаково на машине разработчика, в CI/CD и на production-сервере.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Пример простого Dockerfile для Node.js приложения</p>
+                        <pre>FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD [ "npm", "start" ]</pre>
+                    </div>
+                </section>
+
+                <section id="packaging" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-red-500 mb-4 font-mono">6. Упаковка для дистрибуции</h2>
+                    <p class="text-gray-200 mb-4">
+                        Финальный шаг — сделать продукт доступным. В мире Linux это означает создание пакета, который соответствует стандартам дистрибутива.
+                    </p>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Форматы Дистрибуции:</h3>
+                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
+                        <li><strong>.deb / .rpm:</strong> <strong class="text-red-300">Нативные системные пакеты.</strong> Содержат бинарные файлы, конфигурационные файлы, скрипты установки/удаления и информацию о зависимостях. Идеальны для системного ПО.</li>
+                        <li><strong>Snap / Flatpak:</strong> Универсальные, самодостаточные форматы. <strong class="text-red-300">Включают все зависимости</strong>, что решает проблему конфликтов, но увеличивает размер. Популярны для десктопных приложений.</li>
+                        <li><strong>AppImage:</strong> Однофайловый исполняемый образ. Не требует установки, но не интегрируется с системным менеджером пакетов.</li>
+                    </ul>
+                    <h3 class="text-xl font-semibold text-white mt-4 mb-2">Systemd Unit Files:</h3>
+                    <p class="text-sm text-gray-200">
+                        Чтобы ваше приложение работало как <strong class="text-red-300">демон (фоновый сервис)</strong>, необходимо создать файл `.service` для Systemd, который определяет, как и когда запускать, останавливать и перезапускать вашу программу.
+                    </p>
+                    <div class="code-block p-2 mt-2 rounded-md">
+                        <p class="text-sm text-red-300">Пример минимального Service Unit</p>
+                        <pre>[Unit]
+Description=My Awesome Web Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/my-service-app
+Restart=always
+User=myuser
+
+[Install]
+WantedBy=multi-user.target</pre>
+                    </div>
+                </section>
+                
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            // Функция для активации ссылки в боковой панели
+            const activateNavLink = (id) => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === id) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+
+            // Intersection Observer для подсветки активной секции
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                        activateNavLink(entry.target.id);
+                    }
+                });
+            }, { rootMargin: '-30% 0px -30% 0px', threshold: 0.5 }); // threshold 0.5 - когда 50% секции видно
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Обработка кликов по ссылкам для плавной прокрутки
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        // Активируем ссылку сразу
+                        activateNavLink(targetId);
+                        
+                        // Плавная прокрутка
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 30, // Смещение для видимости заголовка
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Установить активную ссылку при первой загрузке
+            if (sections.length > 0) {
+                activateNavLink(sections[0].id);
+            }
+        });
+    </script>
+</body>
+</html>
