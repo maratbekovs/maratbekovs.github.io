@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лабораторная работа: Основные операции в ОС Linux</title>
+    <title>Интерактивная Лабораторная: Основы Linux</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- Ваш CSS (без изменений) --- */
         * {
             margin: 0;
             padding: 0;
@@ -70,44 +71,11 @@
             border: 1px solid rgba(255, 42, 42, 0.1);
             animation: float 20s infinite linear;
         }
-        .circle:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: -150px;
-            left: -150px;
-            animation-duration: 25s;
-        }
-        .circle:nth-child(2) {
-            width: 150px;
-            height: 150px;
-            top: 20%;
-            right: 10%;
-            animation-duration: 20s;
-            animation-delay: 2s;
-        }
-        .circle:nth-child(3) {
-            width: 200px;
-            height: 200px;
-            bottom: 10%;
-            left: 10%;
-            animation-duration: 30s;
-            animation-delay: 1s;
-        }
-        .circle:nth-child(4) {
-            width: 100px;
-            height: 100px;
-            top: 40%;
-            left: 20%;
-            animation-duration: 15s;
-            animation-delay: 3s;
-        }
-        .circle:nth-child(5) {
-            width: 250px;
-            height: 250px;
-            bottom: -125px;
-            right: -125px;
-            animation-duration: 35s;
-        }
+        .circle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; animation-duration: 25s; }
+        .circle:nth-child(2) { width: 150px; height: 150px; top: 20%; right: 10%; animation-duration: 20s; animation-delay: 2s; }
+        .circle:nth-child(3) { width: 200px; height: 200px; bottom: 10%; left: 10%; animation-duration: 30s; animation-delay: 1s; }
+        .circle:nth-child(4) { width: 100px; height: 100px; top: 40%; left: 20%; animation-duration: 15s; animation-delay: 3s; }
+        .circle:nth-child(5) { width: 250px; height: 250px; bottom: -125px; right: -125px; animation-duration: 35s; }
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -155,7 +123,7 @@
             overflow-x: auto;
             white-space: pre-wrap;
             word-break: break-all;
-            line-height: 1.25; /* Уменьшено для лучшей читаемости кода */
+            line-height: 1.25;
         }
         .step-header {
             background-color: rgba(255, 42, 42, 0.15);
@@ -172,8 +140,78 @@
         .info-box {
             background-color: rgba(40, 40, 40, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #ff9900; /* Желтый для важной информации */
+            border-top: 3px solid #ff9900; 
         }
+
+        /* --- НОВЫЕ СТИЛИ ДЛЯ ИНТЕРАКТИВНОСТИ --- */
+
+        /* Красный блок для критических предупреждений */
+        .danger-box {
+            background-color: rgba(255, 51, 51, 0.1);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            border-top: 3px solid var(--error-red);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .danger-box h3 {
+            color: var(--error-red);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Зеленый блок для "Челленджей" */
+        .challenge-box {
+            background-color: rgba(40, 180, 80, 0.1);
+            border: 1px solid rgba(51, 255, 119, 0.2);
+            border-top: 3px solid var(--success-green);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        .challenge-box-title {
+            color: var(--success-green);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Стилизация выпадающих списков <details> */
+        details {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+        }
+        summary {
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        summary:hover {
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        summary::after {
+            content: '▶';
+            transform: rotate(0deg);
+            transition: transform 0.2s;
+            font-size: 0.8em;
+        }
+        details[open] summary::after {
+            transform: rotate(90deg);
+        }
+        .details-content {
+            padding: 0 1rem 1rem 1rem;
+            border-top: 1px solid rgba(255, 42, 42, 0.2);
+        }
+        /* ------------------------------------------- */
 
         @keyframes pulse {
             0% { opacity: 0.5; transform: scale(1); }
@@ -212,218 +250,288 @@
                 <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
                     <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-red-500 pb-2">Ход Работы</h3>
                     <ul class="space-y-1">
-                        <li><a href="#s1" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Основные команды</a></li>
-                        <li><a href="#s2" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Работа с пакетами</a></li>
-                        <li><a href="#s3" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Файловые системы</a></li>
-                        <li><a href="#s4" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Создание образа (dd)</a></li>
-                        <li><a href="#s5" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. Работа с архивами</a></li>
+                        <li><a href="#s1" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Навигация и Файлы</a></li>
+                        <li><a href="#s2" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Управление ПО</a></li>
+                        <li><a href="#s3" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. Диски и Монтирование</a></li>
+                        <li><a href="#s4" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Создание Образа (dd)</a></li>
+                        <li><a href="#s5" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. Архивация</a></li>
                     </ul>
                 </nav>
             </aside>
             <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
                 <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Лабораторная работа: <span class="text-red-500">Основные операции в ОС Linux</span></h1>
-                    <p class="mt-2 text-lg md:text-xl text-gray-200">Освоить базовые команды Linux, управление пакетами, файловой системой, а также научиться монтировать диски, работать с архивами и создавать образы.</p>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Интерактивная Лабораторная: <span class="text-red-500">Основы Linux</span></h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Учимся работать в терминале: от навигации и управления пакетами до монтирования дисков и создания образов.</p>
                 </header>
 
                 <div class="info-box p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold text-[#ff9900] mb-2 font-mono">🖥️ Оборудование и ПО</h3>
+                    <h3 class="text-xl font-bold text-[#ff9900] mb-2 font-mono">🖥️ Ваше Окружение</h3>
                     <p class="text-gray-200">
-                        Для выполнения работы потребуется любой дистрибутив **Linux**, например: <strong class="text-red-300">Ubuntu / Debian / Kali / Fedora</strong> или другой.
+                        Все команды предназначены для выполнения в терминале (командной строке) Linux. Примеры с <code class="text-red-300">sudo</code> требуют прав администратора (root).
                     </p>
                 </div>
 
                 <section id="s1" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <div class="step-header">
-                        <h2 class="text-2xl">1. Основные команды, работа с файлами и каталогами</h2>
+                        <h2 class="text-2xl">1. Навигация и Работа с Файлами</h2>
                     </div>
                     <p class="text-gray-200 mb-4">
-                        Начнем с базовых команд для навигации и манипулирования файлами в системе.
+                        Основа основ. Учимся "ходить" по папкам и управлять файлами.
                     </p>
                     <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
                         <li>
-                            <p class="mb-1">Определите текущий каталог:</p>
+                            <p class="mb-1"><b>Определите текущий каталог:</b> `pwd` (Print Working Directory) покажет, где вы сейчас находитесь.</p>
                             <div class="code-block p-2 rounded-md"><pre>pwd</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Перейдите в домашний каталог:</p>
+                            <p class="mb-1"><b>Перейдите в домашний каталог:</b> `cd` (Change Directory). Символ `~` (тильда) — это псевдоним вашего домашнего каталога (напр., `/home/username`).</p>
                             <div class="code-block p-2 rounded-md"><pre>cd ~</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Просмотрите содержимое папки (включая скрытые файлы и права доступа):</p>
+                            <p class="mb-1"><b>Просмотрите содержимое папки:</b> `ls` (List).</p>
                             <div class="code-block p-2 rounded-md"><pre>ls -la</pre></div>
+                            <details>
+                                <summary>Что значат флаги -la?</summary>
+                                <div class="details-content mt-2">
+                                    <ul class="list-disc ml-4 text-gray-300">
+                                        <li><code class="text-red-300">-l</code>: **Long** format (длинный формат). Показывает права доступа, владельца, размер файла и дату.</li>
+                                        <li><code class="text-red-300">-a</code>: **All** (все). Показывает скрытые файлы и каталоги (те, что начинаются с точки, например `.bashrc`).</li>
+                                    </ul>
+                                </div>
+                            </details>
                         </li>
                         <li>
-                            <p class="mb-1">Создайте каталог `lab_fs` и перейдите в него:</p>
+                            <p class="mb-1"><b>Создайте каталог и перейдите в него:</b> `mkdir` (Make Directory).</p>
                             <div class="code-block p-2 rounded-md"><pre>mkdir lab_fs
 cd lab_fs</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Создайте пустой файл:</p>
+                            <p class="mb-1"><b>Создайте файл:</b> `touch` "касается" файла. Если его нет, он создается. Если он есть, у него обновляется время последнего изменения.</p>
                             <div class="code-block p-2 rounded-md"><pre>touch test.txt</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Вставьте в файл любую информацию (перезаписывая содержимое):</p>
+                            <p class="mb-1"><b>Запись в файл:</b> `echo` выводит текст. Знак `>` — это **перенаправление вывода**. Он берет вывод `echo` и *перезаписывает* им файл `test.txt`.</p>
                             <div class="code-block p-2 rounded-md"><pre>echo "Hello Linux!" > test.txt</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Скопируйте файл:</p>
+                            <p class="mb-1"><b>Копирование:</b> `cp` (Copy).</p>
                             <div class="code-block p-2 rounded-md"><pre>cp test.txt copy.txt</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Переименуйте файл (команда `mv` - move):</p>
+                            <p class="mb-1"><b>Переименование/Перемещение:</b> `mv` (Move). В Linux нет отдельной команды "rename", для этого используется `mv`.</p>
                             <div class="code-block p-2 rounded-md"><pre>mv copy.txt renamed.txt</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Измените права доступа (644: владелец - чтение/запись, группа - чтение, остальные - чтение):</p>
+                            <p class="mb-1"><b>Измените права доступа:</b> `chmod` (Change Mode).</p>
                             <div class="code-block p-2 rounded-md"><pre>chmod 644 test.txt</pre></div>
-                        </li>
-                        <li>
-                            <p class="mb-1">Измените владельца (требует `sudo`):</p>
-                            <div class="code-block p-2 rounded-md"><pre>sudo chown $USER:$USER test.txt</pre></div>
+                             <details>
+                                <summary>Как читать права "644"?</summary>
+                                <div class="details-content mt-2 text-gray-300">
+                                    <p>Права задаются для трех категорий: **Владелец**, **Группа**, **Остальные**.</p>
+                                    <p>Цифры — это сумма "весов":</p>
+                                    <ul class="list-disc ml-4 mt-2">
+                                        <li><code class="text-red-300">r</code> (read / чтение) = 4</li>
+                                        <li><code class="text-red-300">w</code> (write / запись) = 2</li>
+                                        <li><code class="text-red-300">x</code> (execute / выполнение) = 1</li>
+                                    </ul>
+                                    <p class="mt-2">Таким образом, <strong>644</strong> означает:</p>
+                                    <ul class="list-disc ml-4 mt-2 font-mono">
+                                        <li>Владелец: <strong>6</strong> (4+2) = Чтение + Запись</li>
+                                        <li>Группа: <strong>4</strong> = Только Чтение</li>
+                                        <li>Остальные: <strong>4</strong> = Только Чтение</li>
+                                    </ul>
+                                </div>
+                            </details>
                         </li>
                     </ul>
+                    <div class="challenge-box">
+                        <p class="challenge-box-title">🚀 ЧЕЛЛЕНДЖ:</p>
+                        <p class="text-gray-200">1. Вернитесь в домашний каталог (используя `..` или `~`).<br>2. Создайте каталог `lab_trash`.<br>3. Переместите `lab_fs/renamed.txt` в `lab_trash/`.<br>4. Удалите каталог `lab_fs` (команда `rmdir lab_fs`).</p>
+                    </div>
                 </section>
 
                 <section id="s2" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <div class="step-header">
-                        <h2 class="text-2xl">2. Работа с пакетами</h2>
+                        <h2 class="text-2xl">2. Работа с Пакетами (Управление ПО)</h2>
                     </div>
-                    <p class="text-gray-200 mb-4">
-                        Управление программным обеспечением — ключевой навык. Команды различаются в зависимости от дистрибутива.
-                    </p>
+                    <div class="info-box p-4 rounded-md mb-4">
+                        <h3 class="text-lg font-bold text-[#ff9900] mb-1 font-mono">Что такое менеджер пакетов?</h3>
+                        <p class="text-gray-200">Это ваш "App Store" для терминала. Он следит за ПО, его зависимостями и обновлениями. <code class="text-red-300">apt</code> используется в Debian/Ubuntu, <code class="text-red-300">dnf</code> (или `yum`) — в Fedora/CentOS/RHEL.</p>
+                    </div>
                     
                     <h3 class="text-xl font-bold text-red-300 mb-2 mt-4 font-mono">Для Debian/Ubuntu/Kali (apt)</h3>
                     <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
                         <li>
-                            <p class="mb-1">Обновите список пакетов:</p>
+                            <p class="mb-1"><b>Обновите список пакетов:</b> `apt update` *не обновляет ПО*. Он лишь скачивает свежий "каталог" доступных версий из репозиториев (источников ПО).</p>
                             <div class="code-block p-2 rounded-md"><pre>sudo apt update</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Обновите установленные пакеты до последних версий:</p>
+                            <p class="mb-1"><b>Обновите систему:</b> `apt upgrade` сравнивает ваш установленный софт со свежим "каталогом" и скачивает/устанавливает новые версии.</p>
                             <div class="code-block p-2 rounded-md"><pre>sudo apt upgrade -y</pre></div>
+                             <details>
+                                <summary>Что значит флаг -y?</summary>
+                                <div class="details-content mt-2 text-gray-300">
+                                    <p>Означает **"Yes"** (Да). Без него `apt` спросит вас: "Вы уверены, что хотите установить N пакетов (M мегабайт)?" Флаг `-y` автоматически отвечает "Да" на этот вопрос. Удобно для скриптов.</p>
+                                </div>
+                            </details>
                         </li>
                         <li>
-                            <p class="mb-1">Установите ПО (например, `htop` - монитор процессов):</p>
+                            <p class="mb-1"><b>Установите ПО:</b> (напр. `htop` - крутой монитор процессов).</p>
                             <div class="code-block p-2 rounded-md"><pre>sudo apt install htop</pre></div>
                         </li>
-                        <li>
-                            <p class="mb-1">Удалите программу:</p>
+                         <li>
+                            <p class="mb-1"><b>Удалите программу:</b></p>
                             <div class="code-block p-2 rounded-md"><pre>sudo apt remove htop</pre></div>
                         </li>
                     </ul>
-
-                    <h3 class="text-xl font-bold text-red-300 mb-2 mt-6 font-mono">Для Fedora/CentOS (dnf)</h3>
-                     <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
-                        <li>
-                            <p class="mb-1">Обновите систему:</p>
-                            <div class="code-block p-2 rounded-md"><pre>sudo dnf update</pre></div>
-                        </li>
-                        <li>
-                            <p class="mb-1">Установите `htop`:</p>
-                            <div class="code-block p-2 rounded-md"><pre>sudo dnf install htop</pre></div>
-                        </li>
-                        <li>
-                            <p class="mb-1">Удалите `htop`:</p>
-                            <div class="code-block p-2 rounded-md"><pre>sudo dnf remove htop</pre></div>
-                        </li>
-                    </ul>
+                    <details>
+                        <summary>💡 Про-совет: Как очистить систему?</summary>
+                        <div class="details-content mt-2 text-gray-300">
+                            <p>После `remove` часто остаются "осиротевшие" зависимости (пакеты, которые были нужны `htop`, но теперь не нужны никому). Команда `autoremove` их подчищает:</p>
+                            <div class="code-block p-2 rounded-md mt-2"><pre>sudo apt autoremove</pre></div>
+                        </div>
+                    </details>
+                    
+                    <div class="challenge-box">
+                        <p class="challenge-box-title">🚀 ЧЕЛЛЕНДЖ:</p>
+                        <p class="text-gray-200">1. Установите пакет `neofetch`.<br>2. Запустите его (просто введите `neofetch`).<br>3. Посмотрите, что он выводит.<br>4. Удалите `neofetch` И очистите зависимости (`autoremove`).</p>
+                    </div>
                 </section>
 
                 <section id="s3" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <div class="step-header">
-                        <h2 class="text-2xl">3. Работа с файловыми системами</h2>
+                        <h2 class="text-2xl">3. Работа с Файловыми Системами</h2>
                     </div>
                     <p class="text-gray-200 mb-4">
-                        Просмотр информации о дисках и монтирование внешних устройств или образов.
+                        Как узнать, сколько места осталось на диске, и как "подключить" флешку или образ.
                     </p>
                     <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
                         <li>
-                            <p class="mb-1">Посмотреть информацию о дисках (в читаемом формате):</p>
+                            <p class="mb-1"><b>Посмотреть информацию о дисках:</b> `df` (Disk Free). Флаг `-h` (Human-readable) показывает размеры в Гб/Мб, а не в байтах.</p>
                             <div class="code-block p-2 rounded-md"><pre>df -h</pre></div>
                         </li>
                         <li>
-                            <p class="mb-1">Просмотреть размер каталога (например, домашнего):</p>
+                            <p class="mb-1"><b>Просмотреть размер каталога:</b> `du` (Disk Usage). Флаг `-s` (Summarize) показывает только итог, а не размер каждого под-файла. `-h` также для "человеческого" вида.</p>
                             <div class="code-block p-2 rounded-md"><pre>du -sh ~</pre></div>
                         </li>
                     </ul>
-
+                    
                     <h3 class="text-xl font-bold text-red-300 mb-2 mt-6 font-mono">Монтирование устройства</h3>
-                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                    <details>
+                        <summary>Что такое "монтирование"?</summary>
+                        <div class="details-content mt-2 text-gray-300">
+                            <p>В Linux нет "Диска C:" или "Диска D:". Все является частью единого дерева каталогов, начиная с корня (`/`).</p>
+                            <p class="mt-2"><b>Монтирование</b> — это процесс "прикрепления" файловой системы (флешки, диска, ISO-образа) к существующему пустому каталогу (<b>точке монтирования</b>).</p>
+                            <p class="mt-2">Например, вы прикрепляете флешку (`/dev/sdb1`) к папке (`/mnt/my_flash`). После этого, зайдя в `/mnt/my_flash`, вы увидите содержимое флешки.</p>
+                        </div>
+                    </details>
+                    
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200 mt-4">
                          <li>
-                            <p class="mb-1">Создайте точку монтирования (каталог, куда будет "подключен" диск):</p>
+                            <p class="mb-1"><b>Создайте точку монтирования</b> (просто пустой каталог):</p>
                             <div class="code-block p-2 rounded-md"><pre>sudo mkdir /mnt/testdisk</pre></div>
                         </li>
                          <li>
-                            <p class="mb-1">Смонтируйте устройство (пример для ISO-образа):</p>
+                            <p class="mb-1"><b>Смонтируйте</b> (пример для ISO-образа):</p>
                             <div class="code-block p-2 rounded-md"><pre>sudo mount /path/to/file.iso /mnt/testdisk</pre></div>
-                            <p class="text-sm text-gray-400 mt-1">(Для флешки путь может быть <code class="text-red-300">/dev/sdb1</code>)</p>
                         </li>
                          <li>
-                            <p class="mb-1">Размонтируйте устройство:</p>
+                            <p class="mb-1"><b>Размонтируйте:</b></p>
                             <div class="code-block p-2 rounded-md"><pre>sudo umount /mnt/testdisk</pre></div>
                         </li>
                     </ul>
+                     <div class="info-box p-4 rounded-md mt-4">
+                        <h3 class="text-lg font-bold text-[#ff9900] mb-1 font-mono">⚠️ Важно!</h3>
+                        <p class="text-gray-200">Нельзя размонтировать устройство, если вы (или другой процесс) сейчас находитесь в точке монтирования. Терминал выдаст ошибку "target is busy". Сначала выйдите из каталога (`cd ..`), а потом размонтируйте.</p>
+                    </div>
                 </section>
 
                 <section id="s4" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <div class="step-header">
-                        <h2 class="text-2xl">4. Создание образа диска (dd)</h2>
+                        <h2 class="text-2xl">4. Создание Образа Диска (dd)</h2>
                     </div>
                     <p class="text-gray-200 mb-4">
-                        Команда `dd` (disk dump) используется для побайтового копирования и создания образов.
+                        `dd` — невероятно мощная, но и опасная утилита. Она побайтово копирует всё, что угодно, куда угодно.
                     </p>
-                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                    
+                    <div class="danger-box">
+                        <h3>⚠️ КРИТИЧЕСКОЕ ПРЕДУПРЕЖДЕНИЕ ⚠️</h3>
+                        <p class="text-gray-200">Команду `dd` называют "Disk Destroyer" (Уничтожитель Дисков). Если вы перепутаете `if` (вход) и `of` (выход), вы можете **мгновенно и безвозвратно стереть свой основной диск.**</p>
+                        <p class="text-gray-200 mt-2"><b>Никогда</b> не запускайте: <code class="text-red-300">dd if=... of=/dev/sda</code> (если `/dev/sda` — ваш системный диск). Проверяйте команду трижды.</p>
+                    </div>
+                    
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200 mt-4">
                         <li>
-                            <p class="mb-1">Создаём файл-образ размером 100МБ, заполненный нулями:</p>
+                            <p class="mb-1"><b>Создаём файл-образ:</b> Мы создадим файл `disk.img` размером 100МБ, заполнив его нулями из специального "устройства" `/dev/zero` (бесконечный источник нулей).</p>
                             <div class="code-block p-2 rounded-md"><pre>dd if=/dev/zero of=disk.img bs=1M count=100</pre></div>
+                            <details>
+                                <summary>Разбор параметров dd</summary>
+                                <div class="details-content mt-2 text-gray-300">
+                                    <ul class="list-disc ml-4 mt-2 font-mono">
+                                        <li><code class="text-red-300">if (Input File)</code>: Входной файл (источник). У нас это `/dev/zero`.</li>
+                                        <li><code class="text-red-300">of (Output File)</code>: Выходной файл (назначение). У нас это `disk.img` в текущей папке.</li>
+                                        <li><code class="text-red-300">bs (Block Size)</code>: Размер "куска" для копирования. `1M` = 1 Мегабайт.</li>
+                                        <li><code class="text-red-300">count</code>: Количество "кусков".</li>
+                                    </ul>
+                                    <p class="mt-2">Итого: скопировать 100 кусков по 1МБ = 100МБ.</p>
+                                </div>
+                            </details>
                         </li>
-                    </ul>
-                    <p class="text-gray-200 mt-4 mb-2">Пояснение параметров:</p>
-                    <ul class="list-disc list-outside ml-6 space-y-2 text-gray-200">
-                        <li><code class="text-red-300">if (input file)</code> — источник (в данном случае <code class="text-red-300">/dev/zero</code>, бесконечный поток нулей).</li>
-                        <li><code class="text-red-300">of (output file)</code> — куда сохраняем (наш файл <code class="text-red-300">disk.img</code>).</li>
-                        <li><code class="text-red-300">bs (block size)</code> — размер блока (1 Мегабайт).</li>
-                        <li><code class="text-red-300">count</code> — количество блоков (100 блоков по 1МБ = 100МБ).</li>
                     </ul>
                 </section>
                 
                 <section id="s5" class="step main-content-card p-8 rounded-xl shadow-lg">
                     <div class="step-header">
-                        <h2 class="text-2xl">5. Работа с архивами (tar/gzip)</h2>
+                        <h2 class="text-2xl">5. Работа с Архивами (tar)</h2>
                     </div>
                     <p class="text-gray-200 mb-4">
-                        Архивация (объединение файлов) и сжатие (уменьшение размера).
+                        `tar` (Tape Archive) — стандартная утилита для архивации. Важно понимать: `tar` *объединяет* файлы в один, а `gzip` *сжимает* файл. Часто их используют вместе (`.tar.gz`).
                     </p>
-                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+
+                    <details>
+                        <summary>Как запомнить флаги tar?</summary>
+                        <div class="details-content mt-2 text-gray-300">
+                            <p>Флаги `tar` — это мнемоника:</p>
+                            <ul class="list-disc ml-4 mt-2 font-mono">
+                                <li><code class="text-red-300">-c</code>: **C**reate (Создать архив)</li>
+                                <li><code class="text-red-300">-x</code>: **E**xtract (Извлечь из архива)</li>
+                                <li><code class="text-red-300">-v</code>: **V**erbose (Показывать, что делаешь)</li>
+                                <li><code class="text-red-300">-f</code>: **F**ile (Указать имя файла архива). <b class="text-white">Этот флаг почти всегда идет последним.</b></li>
+                                <li><code class="text-red-300">-z</code>: **G**zip (Сжать/Разжать с помощью gzip).</li>
+                            </ul>
+                        </div>
+                    </details>
+                    
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200 mt-4">
                         <li>
-                            <p class="mb-1">Создайте архив `tar` из текущей папки (`.`):</p>
+                            <p class="mb-1"><b>Создайте архив (без сжатия)</b> из текущей папки (`.`):</p>
                             <div class="code-block p-2 rounded-md"><pre>tar -cvf archive.tar .</pre></div>
                         </li>
                          <li>
-                            <p class="mb-1">Распакуйте `tar` архив:</p>
+                            <p class="mb-1"><b>Распакуйте</b> архив:</p>
                             <div class="code-block p-2 rounded-md"><pre>tar -xvf archive.tar</pre></div>
                         </li>
                          <li>
-                            <p class="mb-1">Создайте сжатый архив `tar.gz` (добавлен флаг `z` - gzip):</p>
+                            <p class="mb-1"><b>Создайте СЖАТЫЙ архив</b> (добавлен флаг `z`):</p>
                             <div class="code-block p-2 rounded-md"><pre>tar -czvf archive.tar.gz .</pre></div>
                         </li>
                          <li>
-                            <p class="mb-1">Распакуйте сжатый архив `tar.gz`:</p>
+                            <p class="mb-1"><b>Распакуйте СЖАТЫЙ архив</b> (флаг `z` на месте):</p>
                             <div class="code-block p-2 rounded-md"><pre>tar -xzvf archive.tar.gz</pre></div>
                         </li>
-                    </ul>
-                     <h3 class="text-xl font-bold text-red-300 mb-2 mt-6 font-mono">Сжатие одного файла (gzip)</h3>
-                     <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
-                        <li>
-                            <p class="mb-1">Сжать один файл (заменяет <code class="text-red-300">test.txt</code> на <code class="text-red-300">test.txt.gz</code>):</p>
-                            <div class="code-block p-2 rounded-md"><pre>gzip test.txt</pre></div>
-                        </li>
-                        <li>
-                            <p class="mb-1">Распаковать <code class="text-red-300">.gz</code> файл:</p>
-                            <div class="code-block p-2 rounded-md"><pre>gunzip test.txt.gz</pre></div>
+                         <li>
+                            <p class="mb-1"><b>Сжатие/Распаковка одного файла (без tar):</b></p>
+                            <div class="code-block p-2 rounded-md"><pre># Сжать (test.txt исчезнет, появится test.txt.gz)
+gzip test.txt
+
+# Распаковать (test.txt.gz исчезнет, появится test.txt)
+gunzip test.txt.gz</pre></div>
                         </li>
                     </ul>
+                     <div class="challenge-box">
+                        <p class="challenge-box-title">🚀 ФИНАЛЬНЫЙ ЧЕЛЛЕНДЖ:</p>
+                        <p class="text-gray-200">1. Создайте два файла: `file1.log` и `file2.log`.<br>2. Наполните их текстом с помощью `echo`.<br>3. Создайте каталог `logs`.<br>4. Создайте **сжатый** архив `logs.tar.gz`, который содержит **только** каталог `logs` (вместе с файлами внутри).</p>
+                    </div>
                 </section>
 
             </main>
@@ -446,10 +554,8 @@ cd lab_fs</pre></div>
 
             const observer = new IntersectionObserver(entries => {
                 let activeEntry = null;
-                // Ищем наиболее просматриваемую секцию
                 entries.forEach(entry => {
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-                         // Проверяем, что секция находится выше других в зоне видимости
                         if (!activeEntry || entry.boundingClientRect.top < activeEntry.boundingClientRect.top) {
                             activeEntry = entry;
                         }
@@ -483,7 +589,6 @@ cd lab_fs</pre></div>
                 });
             });
 
-            // Activate first link on load
             if (sections.length > 0) {
                 activateNavLink(sections[0].id);
             }
