@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лекция: Контейнеры (Docker без страшных слов)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --dark-bg: #0a0a0a;
+            --darker-bg:#050505;
+            --accent: #ff2a2a;
+            --accent-dark: #d42020;
+            --accent-light: #ff4d4d;
+            --text: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(255, 42, 42, 0.3);
+            --error-red: #ff3333;
+            --success-green: #33ff77;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particles::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 85% 30%, rgba(255, 42, 42, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 42, 0.1) 0%, transparent 20%);
+            background-size: 100% 100%;
+            animation: pulse 15s infinite alternate;
+        }
+        .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            animation: float 20s infinite linear;
+        }
+        .circle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; animation-duration: 25s; }
+        .circle:nth-child(2) { width: 150px; height: 150px; top: 20%; right: 10%; animation-duration: 20s; animation-delay: 2s; }
+        .circle:nth-child(3) { width: 200px; height: 200px; bottom: 10%; left: 10%; animation-duration: 30s; animation-delay: 1s; }
+        .circle:nth-child(4) { width: 100px; height: 100px; top: 40%; left: 20%; animation-duration: 15s; animation-delay: 3s; }
+        .circle:nth-child(5) { width: 250px; height: 250px; bottom: -125px; right: -125px; animation-duration: 35s; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .main-content-card {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .nav-link.active {
+            background-color: rgba(255, 42, 42, 0.2);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem !important;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        .nav-link.active:hover {
+            background-color: rgba(255, 42, 42, 0.3);
+        }
+        
+        .code-block {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+        .code-block pre {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.25;
+        }
+        .step-header {
+            background-color: rgba(255, 42, 42, 0.15);
+            border-left: 5px solid var(--accent);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        .step-header h2 {
+            font-weight: 700;
+            color: var(--accent-light);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box {
+            background-color: rgba(40, 40, 40, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ff9900; 
+        }
+
+        /* Стили для <details> (из прошлой лабы) */
+        details {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.1);
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+        }
+        summary {
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        summary:hover {
+            background-color: rgba(255, 42, 42, 0.1);
+        }
+        summary::after {
+            content: '▶';
+            transform: rotate(0deg);
+            transition: transform 0.2s;
+            font-size: 0.8em;
+        }
+        details[open] summary::after {
+            transform: rotate(90deg);
+        }
+        .details-content {
+            padding: 0 1rem 1rem 1rem;
+            border-top: 1px solid rgba(255, 42, 42, 0.2);
+        }
+        /* ------------------------------------------- */
+
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent);
+                padding-left: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+                <nav id="sidebar" class="md:sticky top-8 bg-white/10 p-4 rounded-lg shadow-md border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white font-mono border-b border-red-500 pb-2">План Лекции</h3>
+                    <ul class="space-y-1">
+                        <li><a href="#s1" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors active">1. Главная проблема</a></li>
+                        <li><a href="#s2" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">2. Контейнер vs VM</a></li>
+                        <li><a href="#s3" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">3. "Три кита" Docker</a></li>
+                        <li><a href="#s4" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">4. Зачем это нужно?</a></li>
+                        <li><a href="#s5" class="nav-link block w-full text-left px-4 py-2 text-gray-400 rounded-md transition-colors">5. Пробуем сами</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="w-full md:w-3/4 lg:w-4/5 space-y-12">
+                <header class="text-center my-8 rounded-xl p-8 bg-white/10 backdrop-blur-md border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white font-mono">Лекция: Контейнеры в Linux</h1>
+                    <p class="mt-2 text-lg md:text-xl text-gray-200">Docker <span class="text-red-500">без страшных слов:</span> Как перестать бояться и начать изолировать.</p>
+                </header>
+
+                <div class="info-box p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-[#ff9900] mb-2 font-mono">🚀 Цель лекции</h3>
+                    <p class="text-gray-200">
+                        Понять, что такое контейнер, на простых житейских аналогиях. Мы не будем лезть в "неймспейсы" и "cgroups". Мы поймем <strong class="text-red-300">суть</strong>: зачем Docker нужен вам, как разработчику или сисадмину.
+                    </p>
+                </div>
+
+                <section id="s1" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">1. Главная проблема: "У меня всё работает!"</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Это главная боль в разработке. Вы пишете код на своем ноутбуке. У вас стоит Ubuntu 22.04, Python 3.10 и база данных PostgreSQL 14. Все работает как часы.
+                    </p>
+                    <p class="text-gray-200 mb-4">
+                        Вы отдаете код коллеге. А у него Windows, Python 3.9 и PostgreSQL 12. Ваш код падает с ошибками.
+                    </p>
+                    <p class="text-gray-200 mb-4">
+                        Потом вы пытаетесь "выкатить" это на сервер, а там вообще древний CentOS 7 с Python 2.7...
+                    </p>
+                    <p class="text-gray-200 mb-4">
+                        <b>Проблема:</b> Ваш код работает только в <strong class="text-red-300">вашем окружении</strong> (ОС, библиотеки, настройки).
+                    </p>
+                    <p class="text-gray-200 mb-4">
+                        <b>Решение:</b> А что, если... паковать приложение не просто как код, а <strong class="text-red-300">вместе со всем его окружением</strong>?
+                    </p>
+                    <details>
+                        <summary>Аналогия: Коробка для переезда</summary>
+                        <div class="details-content mt-2 text-gray-300">
+                            <p>Представьте, что ваше приложение — это настольная лампа. Вы не можете просто отдать ее другу. Ему нужна *конкретная* лампочка, *конкретный* переходник и, возможно, инструкция.</p>
+                            <p class="mt-2"><b>Контейнер</b> — это коробка, в которую вы кладете:
+                                <ul class="list-disc ml-6 mt-2">
+                                    <li>Лампу (ваш код)</li>
+                                    <li>Лампочку (Python 3.10)</li>
+                                    <li>Переходник (библиотека `requests` v2.28)</li>
+                                    <li>Инструкцию (команда `python app.py`)</li>
+                                </ul>
+                            </p>
+                            <p class="mt-2">Вы отдаете другу <b class="text-white">всю коробку</b>. Ему не нужно бегать и искать лампочку. Он просто "включает" коробку, и лампа горит.</p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="s2" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">2. Контейнер vs. Виртуальная Машина (VM)</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        "Постойте!" — скажете вы. "Ведь для этого давно придумали Виртуальные Машины (VM)!".
+                    </p>
+                    <p class="text-gray-200 mb-4">
+                        Да, но у VM есть огромный недостаток: они <strong class="text-red-300">тяжелые</strong>.
+                    </p>
+
+                    <h3 class="text-xl font-bold text-red-300 mb-2 mt-4 font-mono">Аналогия: Дом vs. Квартира</h3>
+                    
+                    <p class="text-gray-200 mb-4">
+                        <b class="text-white">🏠 Виртуальная Машина (VM) — это как построить отдельный ДОМ.</b>
+                        <br>
+                        Чтобы запустить приложение, вы строите целый дом. У него свой фундамент (Гипервизор), свои стены, своя крыша и <b class="text-white">своя копия целой Операционной Системы</b> (Гостевая ОС). Это занимает гигабайты места и минуты на запуск.
+                    </p>
+                    <p class="text-gray-200 mb-4">
+                        <b class="text-white">📦 Контейнер (Docker) — это как КВАРТИРА в общем доме.</b>
+                        <br>
+                        Вы не строите новый дом. Вы используете <b class="text-white">общий фундамент</b> (Ядро вашего Linux) и общие коммуникации. Вы просто изолируете "квартиру" (контейнер) со своим приложением и его библиотеками. Это занимает мегабайты и запускается за секунды.
+                    </p>
+                    
+                    <div class="info-box p-4 rounded-md mb-4 mt-4">
+                        <h3 class="text-lg font-bold text-[#ff9900] mb-1 font-mono">Ключевая разница</h3>
+                        <p class="text-gray-200">
+                           <b>VM</b> эмулирует <b>железо</b> и запускает <b class="text-white">целую ОС</b>.
+                           <br>
+                           <b>Контейнер</b> эмулирует <b>ОС</b> (на самом деле просто изолирует процесс) и работает <b class="text-white">поверх вашего ядра Linux</b>.
+                        </p>
+                    </div>
+                    <p class="text-gray-200"></p>
+                </section>
+
+                <section id="s3" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">3. "Три кита" Docker: Ключевые понятия</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        Чтобы понять Docker, нужно знать всего три слова.
+                    </p>
+                     <h3 class="text-xl font-bold text-red-300 mb-2 mt-4 font-mono">Аналогия: Рецепт, Торт и Кухня</h3>
+
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1"><b class="text-white text-xl">1. Image (Образ) — это Рецепт</b>
+                            <br>
+                            Это <b class="text-white">шаблон</b>, "чертеж" или рецепт вашей "коробки". Это просто файл, он не запущен.
+                            <br>
+                            Пример: "Рецепт 'Торт': 1. Взять муку (Ubuntu). 2. Добавить сахар (Python). 3. Положить вишенку (ваш код `app.py`)."</p>
+                        </li>
+                        <li>
+                            <p class="mb-1"><b class="text-white text-xl">2. Container (Контейнер) — это Торт</b>
+                            <br>
+                            Это <b class="text-white">запущенный экземпляр</b> вашего Образа. Это живой, работающий процесс, испеченный по "рецепту".
+                            <br>
+                            Вы можете испечь <b class="text-white">много</b> тортов (контейнеров) по <b class="text-white">одному</b> рецепту (образу).</p>
+                        </li>
+                         <li>
+                            <p class="mb-1"><b class="text-white text-xl">3. Dockerfile — это Текст Рецепта</b>
+                            <br>
+                            Это простой текстовый файл, в котором вы <b class="text-white">пишете инструкции</b> для создания Образа (Рецепта).
+                            </p>
+                            <div class="code-block p-2 rounded-md mt-2">
+<pre>
+# 1. Взять "муку" (базовый образ Ubuntu)
+FROM ubuntu:22.04
+
+# 2. Добавить "сахар" (установить Python)
+RUN apt update && apt install -y python3
+
+# 3. Положить "вишенку" (скопировать наш код внутрь)
+COPY ./app.py /app/app.py
+
+# 4. Сказать, как "подавать" (что запускать)
+CMD ["python3", "/app/app.py"]
+</pre>
+                            </div>
+                        </li>
+                    </ul>
+                     <details>
+                        <summary>💡 А что такое Docker Hub?</summary>
+                        <div class="details-content mt-2 text-gray-300">
+                            <p>Это <b class="text-white">Огромная Книга Рецептов</b> (как GitHub, но для Образов).</p>
+                            <p class="mt-2">Вам не нужно каждый раз писать в рецепте "как вырастить пшеницу и смолоть муку" (ставить Ubuntu с нуля). Вы просто берете готовый Образ `ubuntu` или `python` из Docker Hub.</p>
+                        </div>
+                    </details>
+                </section>
+
+                <section id="s4" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">4. Зачем это нужно? (Реальная польза)</h2>
+                    </div>
+                    <ul class="list-disc list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <b class="text-white">"Работает везде" (Портативность)</b>
+                            <br>
+                            Та самая "коробка". Если на машине (вашей, коллеги, сервере) стоит Docker, ваша "коробка" (контейнер) запустится на ней одинаково.
+                        </li>
+                         <li>
+                            <b class="text-white">Скорость</b>
+                            <br>
+                            Контейнер запускается не за минуты, как VM, а <b class="text-white">за секунды</b>. Это кардинально меняет процесс разработки и тестирования.
+                        </li>
+                         <li>
+                            <b class="text-white">Изоляция (Чистота)</b>
+                            <br>
+                            Вы можете запустить на одной машине проект, требующий <b class="text-red-300">Python 2.7</b>, и рядом проект, требующий <b class="text-red-300">Python 3.11</b>. Они будут в разных контейнерах и никогда не узнают друг о друге. Ваша основная система остается чистой.
+                        </li>
+                         <li>
+                            <b class="text-white">Микросервисы</b>
+                            <br>
+                            Docker — идеальный инструмент для микросервисной архитектуры. Вместо одного гигантского приложения-монолита, вы делаете 10 маленьких (веб-сервер, база данных, очередь сообщений) — каждое в своей "коробке". Ими легче управлять, обновлять и масштабировать.
+                        </li>
+                    </ul>
+                </section>
+                
+                <section id="s5" class="step main-content-card p-8 rounded-xl shadow-lg">
+                    <div class="step-header">
+                        <h2 class="text-2xl">5. Пробуем сами (Базовые команды)</h2>
+                    </div>
+                    <p class="text-gray-200 mb-4">
+                        (Предполагается, что Docker у вас уже установлен).
+                    </p>
+                    <ul class="list-decimal list-outside ml-6 space-y-4 text-gray-200">
+                        <li>
+                            <p class="mb-1"><b>"Пинг" для Docker.</b> Эта команда скачает (если нет) и запустит крошечный образ, который просто напишет "Hello from Docker!" и завершится.</p>
+                            <div class="code-block p-2 rounded-md"><pre>docker run hello-world</pre></div>
+                        </li>
+                         <li>
+                            <p class="mb-1"><b>Запустить интерактивную сессию Ubuntu.</b>
+                            <br>
+                            Флаг <code class="text-red-300">-it</code> (interactive + tty) дает нам командную строку <code class="text-red-300">bash</code> *внутри* нового контейнера.</p>
+                            <div class="code-block p-2 rounded-md"><pre>docker run -it ubuntu bash</pre></div>
+                            <p class="text-sm text-gray-400 mt-1">Вы окажетесь внутри! Выполните `ls` или `cat /etc/os-release`. Вы увидите файловую систему Ubuntu, даже если у вас на хосте Fedora или macOS. Чтобы выйти, напишите `exit`.</p>
+                        </li>
+                         <li>
+                            <p class="mb-1"><b>Посмотреть запущенные контейнеры:</b></p>
+                            <div class="code-block p-2 rounded-md"><pre>docker ps</pre></div>
+                             <p class="text-sm text-gray-400 mt-1">(Добавьте флаг <code class="text-red-300">-a</code>, чтобы увидеть и остановленные).</p>
+                        </li>
+                         <li>
+                            <p class="mb-1"><b>Посмотреть скачанные "рецепты" (Образы):</b></p>
+                            <div class="code-block p-2 rounded-md"><pre>docker images</pre></div>
+                        </li>
+                         <li>
+                            <p class="mb-1"><b>Остановить контейнер</b> (имя или ID берем из `docker ps`):</p>
+                            <div class="code-block p-2 rounded-md"><pre>docker stop [container_name_or_id]</pre></div>
+                        </li>
+                    </ul>
+                    <div class="info-box p-6 rounded-xl shadow-lg mt-6">
+                        <h3 class="text-xl font-bold text-[#ff9900] mb-2 font-mono">Что дальше?</h3>
+                        <p class="text-gray-200">
+                            Следующие шаги — это <b class="text-white">Docker Compose</b> (чтобы запускать несколько "коробок" одной командой, например, "веб-сервер + база данных") и <b class="text-white">Kubernetes</b> (чтобы управлять сотнями и тысячами "коробок" на кластере серверов). Но основа всего — это простые концепции, которые мы сегодня разобрали.
+                        </p>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section.step');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const activateNavLink = (id) => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === id) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(entries => {
+                let activeEntry = null;
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                        if (!activeEntry || entry.boundingClientRect.top < activeEntry.boundingClientRect.top) {
+                            activeEntry = entry;
+                        }
+                    }
+                });
+                if (activeEntry) {
+                    activateNavLink(activeEntry.target.id);
+                }
+            }, { rootMargin: '-30% 0px -30% 0px', threshold: 0.5 }); 
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        activateNavLink(targetId);
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 30,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            if (sections.length > 0) {
+                activateNavLink(sections[0].id);
+            }
+        });
+    </script>
+</body>
+</html>
